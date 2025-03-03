@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Taskaroo</string>
+    <string name="continue_with_email">Continue with Email</string>
 </resources>
