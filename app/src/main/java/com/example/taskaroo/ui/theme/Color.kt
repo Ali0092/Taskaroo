@@ -14,7 +14,8 @@ val Pink40 = Color(0xFF7D5260)
 val red = Color(0xffE44332) // Used for highlights, branding, and key UI elements.
 val white = Color(0xffFFFFFF) // Backgrounds and clean space.
 val black = Color(0xff000000) // Text and icons for contrast.
-val darkGray = Color(0xff1E1E1E) // Dark mode background.
+val darkGray = Color(0xFF282828) // Dark mode background.
+val liteDarkGray = Color(0xFF232323) // Dark mode background.
 val lightGray = Color(0xffF5F5F5) // Light mode background.
 
 //Accent Colors (For labels and priority levels)
