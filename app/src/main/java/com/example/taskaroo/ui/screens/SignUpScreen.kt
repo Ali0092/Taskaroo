@@ -33,15 +33,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.darkGray
 import com.example.taskaroo.ui.theme.lightGray
 import com.example.taskaroo.ui.theme.red
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(navController: NavController) {
 
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
@@ -125,7 +127,9 @@ fun SignUpScreen() {
         Spacer(modifier = Modifier.height(21.sdp))
 
         Button(
-            onClick = {},
+            onClick = {
+                navController.navigate(Screens.USER_PROFILE.name)
+            },
             enabled = true,
             modifier = Modifier.fillMaxWidth(),
             shape = CircleShape,

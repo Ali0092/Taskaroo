@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.example.taskaroo.MainScreen
+import com.example.taskaroo.ui.screens.CreateProfile
 import com.example.taskaroo.ui.screens.OnBoardingScreen
 import com.example.taskaroo.ui.screens.SignUpScreen
 
@@ -12,7 +14,11 @@ enum class Screens{
     ONBOARDING,
     SIGNUP,
     USER_PROFILE,
-    MAIN
+    MAIN,
+    HOME,
+    SEARCH,
+    PROFILE,
+    ADD_TASK,
 }
 
 //this is our simple screen navigation
@@ -23,6 +29,9 @@ sealed class SimpleScreenNavigationItem(val route: String){
     object Main: SimpleScreenNavigationItem(Screens.MAIN.name)
 }
 
+sealed class BottomNavigationItem(val route: String, val icon: Int, val title: String) {
+
+}
 //this is out nav_graph
 @Composable
 fun AppsNavHost(
@@ -38,19 +47,19 @@ fun AppsNavHost(
     ){
 
         composable(SimpleScreenNavigationItem.OnBoarding.route) {
-            OnBoardingScreen()
+            OnBoardingScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.Signup.route) {
-            SignUpScreen()
+            SignUpScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.UserProfile.route) {
-            SignUpScreen()
+            CreateProfile(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.Main.route) {
-            SignUpScreen()
+            MainScreen()
         }
 
     }

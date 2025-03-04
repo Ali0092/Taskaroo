@@ -17,15 +17,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.components.DotIndicator
+import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.darkGray
 import com.example.taskaroo.ui.theme.lightGray
 import com.example.taskaroo.ui.theme.red
 import kotlinx.coroutines.launch
 
 @Composable
-fun CreateProfile() {
+fun CreateProfile(navController: NavController) {
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val animationScope = rememberCoroutineScope()
@@ -57,8 +59,7 @@ fun CreateProfile() {
                         buttonText.value = "Get Started !"
                         pagerState.animateScrollToPage(1)
                     }else {
-                        buttonText.value = "Continue"
-                        pagerState.animateScrollToPage(0)
+                        navController.navigate(Screens.MAIN.name)
                     }
                 }
 

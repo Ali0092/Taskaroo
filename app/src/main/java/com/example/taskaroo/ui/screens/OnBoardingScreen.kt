@@ -3,11 +3,13 @@ package com.example.taskaroo.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,16 +35,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.components.DotIndicator
 import com.example.taskaroo.model.PagerModel
+import com.example.taskaroo.nav_component.Screens
+import com.example.taskaroo.ui.theme.darkGray
 import com.example.taskaroo.ui.theme.lightGray
 import com.example.taskaroo.ui.theme.red
 
 @Composable
-fun OnBoardingScreen(modifier: Modifier = Modifier) {
+fun OnBoardingScreen(navController: NavController) {
 
     val picturesList = listOf(
         PagerModel(image = R.drawable.onboarding_1, quote = "My Tasks used to be scattered all around. Now\n they`re in one place!", author = "Peter Parker."),
@@ -51,14 +56,14 @@ fun OnBoardingScreen(modifier: Modifier = Modifier) {
     )
 
     Column(
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize().background(darkGray),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         val pagerState = rememberPagerState(pageCount = { 3 })
         //top title....
         Row(modifier = Modifier
-            .padding(top = 24.sdp)
+            .padding(top = 44.sdp)
             .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
             Image(painter = painterResource(R.drawable.app_icon),
@@ -85,7 +90,10 @@ fun OnBoardingScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Transparent)
-                .padding(32.sdp),
+                .padding(32.sdp)
+                .clickable{
+                    navController.navigate(Screens.SIGNUP.name)
+                },
             shape = CircleShape,
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             border = BorderStroke(width = 0.3.dp, color = Color.White),
@@ -112,7 +120,7 @@ fun OnBoardingScreen(modifier: Modifier = Modifier) {
                 )
             }
         }
-        Spacer(modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
         //bottom text
         Column(modifier = Modifier.fillMaxWidth().padding(bottom = 24.sdp)) {
