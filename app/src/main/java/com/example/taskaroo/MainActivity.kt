@@ -4,10 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.taskaroo.ui.screens.CreateProfile
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.ui.theme.TaskarooTheme
+import com.example.taskaroo.ui.theme.darkGray
 
-data class PagerModel(val image: Int, val quote: String, val author: String)
 
 class MainActivity : ComponentActivity() {
 
@@ -16,9 +26,31 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskarooTheme {
-                CreateProfile()
+                MainScreen()
             }
         }
     }
 
+}
+
+@Composable
+fun MainScreen() {
+    Scaffold(modifier = Modifier
+        .fillMaxSize()
+        .background(darkGray),
+        topBar = {},
+        bottomBar = {},
+        content = { paddingValue->
+            HomeScreen(modifier = Modifier.padding(paddingValue))
+        },
+        floatingActionButton = {})
+}
+
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier) {
+    Column(modifier= modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("HomeScreen", fontSize = 24.textSdp)
+    }
 }

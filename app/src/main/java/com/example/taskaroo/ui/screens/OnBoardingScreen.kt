@@ -33,11 +33,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.taskaroo.PagerModel
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.components.DotIndicator
+import com.example.taskaroo.model.PagerModel
 import com.example.taskaroo.ui.theme.lightGray
 import com.example.taskaroo.ui.theme.red
 
