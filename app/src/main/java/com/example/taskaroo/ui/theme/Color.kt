@@ -11,12 +11,17 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 
-val red = Color(0xffE44332) // Used for highlights, branding, and key UI elements.
-val white = Color(0xffFFFFFF) // Backgrounds and clean space.
+//val backgroundColor = Color(0xFF313642)
+val backgroundColor = Color(0xFF2E323D)
+val cardColor = Color(0xFF3e4553)
+
+
+val red = Color(0xfffb7160) // Used for highlights, branding, and key UI elements.
+val etxt = Color(0xffFFFFFF) // Backgrounds and clean space.
 val black = Color(0xff000000) // Text and icons for contrast.
 val darkGray = Color(0xFF282828) // Dark mode background.
 val liteDarkGray = Color(0xFF232323) // Dark mode background.
-val lightGray = Color(0xffF5F5F5) // Light mode background.
+val textColor = Color(0xffF5F5F5) // Light mode background.
 
 //Accent Colors (For labels and priority levels)
 val orange = Color(0xffF4A62A) // Priority 1 tasks.

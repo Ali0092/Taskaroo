@@ -39,7 +39,7 @@ import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.darkGray
-import com.example.taskaroo.ui.theme.lightGray
+import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 
 @Composable
@@ -54,7 +54,7 @@ fun SignUpScreen(navController: NavController) {
         Image(imageVector = Icons.Default.ArrowBack,
             contentDescription = null,
             modifier = Modifier.size(25.sdp),
-            colorFilter = ColorFilter.tint(lightGray)
+            colorFilter = ColorFilter.tint(textColor)
         )
 
         Text(
@@ -62,7 +62,7 @@ fun SignUpScreen(navController: NavController) {
             text = "Sing up",
             fontSize = 24.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
@@ -70,7 +70,7 @@ fun SignUpScreen(navController: NavController) {
         Text(text = "Add your email and password.",
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(24.sdp))
@@ -84,10 +84,10 @@ fun SignUpScreen(navController: NavController) {
             singleLine = true,
             colors =  OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = red,   // Border color when focused
-                unfocusedBorderColor = lightGray, // Border color when not focused
+                unfocusedBorderColor = textColor, // Border color when not focused
                 cursorColor = red,          // Cursor color
                 focusedLabelColor = red,
-                unfocusedLabelColor = lightGray,
+                unfocusedLabelColor = textColor,
             ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
@@ -106,10 +106,10 @@ fun SignUpScreen(navController: NavController) {
             singleLine = true,
             colors =  OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = red,   // Border color when focused
-                unfocusedBorderColor = lightGray, // Border color when not focused
+                unfocusedBorderColor = textColor, // Border color when not focused
                 cursorColor = red,          // Cursor color
                 focusedLabelColor = red,
-                unfocusedLabelColor = lightGray,
+                unfocusedLabelColor = textColor,
             ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -135,7 +135,7 @@ fun SignUpScreen(navController: NavController) {
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = red)
         ) {
-            Text("Sign up", modifier = Modifier.padding(vertical = 8.sdp), color = lightGray)
+            Text("Sign up", modifier = Modifier.padding(vertical = 8.sdp), color = textColor)
         }
 
 

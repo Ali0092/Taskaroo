@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
-import com.example.taskaroo.ui.theme.lightGray
+import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.liteDarkGray
 import com.example.taskaroo.ui.theme.red
 
@@ -48,7 +48,7 @@ fun SelectPreferences() {
             text = "How do you plan to user Taskaroo?",
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
@@ -56,7 +56,7 @@ fun SelectPreferences() {
         Text(text = "Choose that apply.",
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(24.sdp))
@@ -99,11 +99,11 @@ fun PreferenceSingleItem(icon: Int, title: String) {
             Text(text = title,
                 fontSize = 14.textSdp,
                 fontWeight = FontWeight.Normal,
-                color = lightGray
+                color = textColor
             )
             Spacer(Modifier.weight(1f))
 
-            Icon(imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle, contentDescription = null, modifier = Modifier.size(25.sdp).clickable{ isChecked = !isChecked }, tint = if (isChecked) red else lightGray)
+            Icon(imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle, contentDescription = null, modifier = Modifier.size(25.sdp).clickable{ isChecked = !isChecked }, tint = if (isChecked) red else textColor)
         }
 
     }

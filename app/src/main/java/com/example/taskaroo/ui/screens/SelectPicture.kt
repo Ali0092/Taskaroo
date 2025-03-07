@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.ui.theme.darkGray
-import com.example.taskaroo.ui.theme.lightGray
+import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 
 @Composable
@@ -61,7 +61,7 @@ fun SelectPicture() {
             imageVector = Icons.Default.ArrowBack,
             contentDescription = null,
             modifier = Modifier.size(25.sdp),
-            colorFilter = ColorFilter.tint(lightGray)
+            colorFilter = ColorFilter.tint(textColor)
         )
 
         Text(
@@ -69,7 +69,7 @@ fun SelectPicture() {
             text = "Create your profile",
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
@@ -77,7 +77,7 @@ fun SelectPicture() {
         Text(text = "Congratulations on taking the first step towards feeling more organized",
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = lightGray
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(24.sdp))
@@ -91,7 +91,7 @@ fun SelectPicture() {
                 .background(Color.Transparent),
             shape = RoundedCornerShape(10.sdp),
             colors = CardDefaults.cardColors(containerColor =Color.Transparent),
-            border = BorderStroke(width = 0.3.dp, color = lightGray),
+            border = BorderStroke(width = 0.3.dp, color = textColor),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(12.sdp),
@@ -101,7 +101,7 @@ fun SelectPicture() {
                 Text(text = "Your profile",
                     fontSize = 15.textSdp,
                     fontWeight = FontWeight.SemiBold,
-                    color = lightGray,
+                    color = textColor,
                     textAlign = TextAlign.Center
                 )
 
@@ -109,13 +109,13 @@ fun SelectPicture() {
                 Card(modifier = Modifier.size(90.sdp).padding(vertical = 8.sdp),
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor =Color.Transparent),
-                    border = BorderStroke(width = 0.3.dp, color = lightGray)) {
+                    border = BorderStroke(width = 0.3.dp, color = textColor)) {
                     Image(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize().padding(20.sdp),
-                        colorFilter = ColorFilter.tint(lightGray)
+                        colorFilter = ColorFilter.tint(textColor)
                     )
                 }
 
@@ -139,12 +139,12 @@ fun SelectPicture() {
                         Image(
                             imageVector =  Icons.Default.AccountCircle,
                             contentDescription = null, modifier = Modifier.size(25.sdp),
-                            colorFilter = ColorFilter.tint(lightGray)
+                            colorFilter = ColorFilter.tint(textColor)
                         )
 
                         Text(text = "Upload Photo",
                             modifier = Modifier.padding(start = 8.sdp),
-                            color = lightGray,
+                            color = textColor,
                             fontSize = 13.textSdp,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center
@@ -162,10 +162,10 @@ fun SelectPicture() {
                     singleLine = true,
                     colors =  OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = red,   // Border color when focused
-                        unfocusedBorderColor = lightGray, // Border color when not focused
+                        unfocusedBorderColor = textColor, // Border color when not focused
                         cursorColor = red,          // Cursor color
                         focusedLabelColor = red,
-                        unfocusedLabelColor = lightGray,
+                        unfocusedLabelColor = textColor,
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,

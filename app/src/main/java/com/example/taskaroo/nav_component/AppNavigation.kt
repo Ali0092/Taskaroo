@@ -11,12 +11,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.example.taskaroo.HomeScreen
-import com.example.taskaroo.MainScreen
-import com.example.taskaroo.ProfileScreen
-import com.example.taskaroo.R
-import com.example.taskaroo.SearchScreen
 import com.example.taskaroo.ui.screens.CreateProfile
+import com.example.taskaroo.ui.screens.MainScreen
 import com.example.taskaroo.ui.screens.OnBoardingScreen
 import com.example.taskaroo.ui.screens.SignUpScreen
 
@@ -50,7 +46,7 @@ sealed class BottomNavigationItem(val route: String, val icon: ImageVector, val 
 fun AppsNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    startDestination: String = SimpleScreenNavigationItem.OnBoarding.route) {
+    startDestination: String = SimpleScreenNavigationItem.Main.route) {
 
 
     NavHost(
@@ -64,7 +60,8 @@ fun AppsNavHost(
         }
 
         composable(SimpleScreenNavigationItem.Signup.route) {
-            SignUpScreen(navController = navController)
+            MainScreen()
+//            SignUpScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.UserProfile.route) {

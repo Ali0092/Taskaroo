@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Taskaroo</string>
-    <string name="continue_with_email">Continue with Email</string>
+    <string name="buttonGetStarted">Let`s Start</string>
+    <string name="onboarding_subtitle">Manage your tasks &amp; goals \nwith Taskaroo</string>
 </resources>

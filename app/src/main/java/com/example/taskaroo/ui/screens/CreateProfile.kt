@@ -22,7 +22,7 @@ import com.example.taskaroo.common.sdp
 import com.example.taskaroo.components.DotIndicator
 import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.darkGray
-import com.example.taskaroo.ui.theme.lightGray
+import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 import kotlinx.coroutines.launch
 
@@ -69,7 +69,7 @@ fun CreateProfile(navController: NavController) {
                 .fillMaxWidth()
                 .padding(bottom = 24.sdp)
         ) {
-            Text(buttonText.value, modifier = Modifier.padding(vertical = 8.sdp), color = lightGray)
+            Text(buttonText.value, modifier = Modifier.padding(vertical = 8.sdp), color = textColor)
         }
 
     }
