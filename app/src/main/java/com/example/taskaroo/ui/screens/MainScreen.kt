@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,14 +21,17 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,48 +50,55 @@ import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.model.CategoryModel
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.cardColor
+import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 
 @Composable
 fun MainScreen() {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
+            .verticalScroll(rememberScrollState()),
     ) {
-        //top app bar, name, total tasks and profile picture
-        TopBar()
-        Spacer(Modifier.height(16.sdp))
+        item{
+            TopBar()
+            Spacer(Modifier.height(16.sdp))
+            SearchBar()
+            Spacer(Modifier.height(24.sdp))
 
-        SearchBar()
-        Spacer(Modifier.height(24.sdp))
+            //top app bar, name, total tasks and profile picture
+            SectionCategories()
 
-        SectionCategories()
-        Spacer(Modifier.height(24.sdp))
+            Spacer(Modifier.height(24.sdp))
+            SectionTasks()
+        }
 
-        SectionTasks()
+
+
     }
 }
 
 @Composable
 fun SectionTasks() {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 21.sdp)
+            .padding(horizontal = 21.sdp, vertical = 12.sdp)
     ) {
-        Text(
-            text = "Ongoing Tasks",
-            color = textColor,s
-            fontSize = 18.textSdp,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(modifier = Modifier.height(16.sdp))
-        LazyColumn {
-            items(5) {
-                ItemTaskSection()
-            }
+        item {
+            Text(
+                text = "Ongoing Tasks",
+                color = textColor,
+                fontSize = 18.textSdp,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(8.sdp))
+        }
+
+        items(5) {
+            ItemTaskSection()
         }
 
 
@@ -101,7 +112,8 @@ fun ItemTaskSection() {
         modifier = Modifier
             .background(Color.Transparent)
             .fillMaxWidth()
-            .height(150.sdp)
+            .height(180.sdp)
+            .padding(top = 16.sdp)
             .clickable {
 
             },
@@ -124,17 +136,54 @@ fun ItemTaskSection() {
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(text = "1 day", color = red, fontSize = 10.textSdp)
+                Card(
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(containerColor = red),
+                    border = BorderStroke(width = 0.4.dp, color = textColor)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.sdp, vertical = 2.sdp),
+                        text = "High",
+                        color = textColor,
+                        fontSize = 12.textSdp)
+                }
+
+
+                Spacer(modifier = Modifier.width(8.sdp))
+
+                Text(text = "Days left 1 ", color = green, fontSize = 10.textSdp)
 
             }
 
-            Spacer(modifier = Modifier.height(12.sdp))
+            Spacer(modifier = Modifier.height(8.sdp))
+
             Text(
                 text = "This task is all about the IDGAF, The IDGAF means not giving fuck about people who are stupid, dont give value to you, to your emotions, time, effort",
                 color = textColor,
                 fontSize = 12.textSdp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 3,
+                modifier = Modifier.alpha(0.7f)
             )
+
+            Spacer(modifier = Modifier.height(8.sdp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                Icon(imageVector = Icons.Rounded.Notifications, contentDescription = null, tint = red, modifier = Modifier.size(20.sdp))
+
+                Spacer(modifier = Modifier.width(5.sdp))
+
+                Text(
+                    text = "12-12-2025 02:30 PM",
+                    color = textColor,
+                    fontSize = 12.textSdp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 3,
+                )
+
+            }
+
         }
 
     }
@@ -185,7 +234,7 @@ fun ItemCategoriesSection(title: String, totalTasks: Int, icon: Int) {
         modifier = Modifier
             .width(150.sdp)
             .height(160.sdp)
-            .padding(end = 12.sdp)
+            .padding(end = 16.sdp)
             .clip(RoundedCornerShape(20.sdp))
             .background(cardColor)
     ) {
@@ -195,14 +244,14 @@ fun ItemCategoriesSection(title: String, totalTasks: Int, icon: Int) {
 
             Text(
                 text = title,
-                color = red,
+                color = textColor,
                 fontSize = 17.textSdp,
                 fontWeight = FontWeight.SemiBold,
             )
 
             Text(
                 text = "${totalTasks} Pending Tasks",
-                modifier = Modifier.padding(top = 2.sdp),
+                modifier = Modifier.padding(top = 1.sdp).alpha(0.7f),
                 color = textColor,
                 fontSize = 13.textSdp,
                 fontWeight = FontWeight.Normal,
