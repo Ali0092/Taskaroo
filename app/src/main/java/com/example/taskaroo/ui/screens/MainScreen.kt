@@ -1,5 +1,6 @@
 package com.example.taskaroo.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,9 +11,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -60,49 +63,41 @@ fun MainScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
-            .verticalScroll(rememberScrollState()),
     ) {
-        item{
+        item {
             TopBar()
             Spacer(Modifier.height(16.sdp))
             SearchBar()
             Spacer(Modifier.height(24.sdp))
-
-            //top app bar, name, total tasks and profile picture
             SectionCategories()
-
             Spacer(Modifier.height(24.sdp))
             SectionTasks()
         }
-
-
-
     }
 }
 
 @Composable
 fun SectionTasks() {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 21.sdp, vertical = 12.sdp)
-    ) {
-        item {
-            Text(
-                text = "Ongoing Tasks",
-                color = textColor,
-                fontSize = 18.textSdp,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(modifier = Modifier.height(8.sdp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 21.sdp, vertical = 12.sdp)
+        ) {
+                Text(
+                    text = "Ongoing Tasks",
+                    color = textColor,
+                    fontSize = 18.textSdp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.height(8.sdp))
+
+            repeat(10) {time->
+                ItemTaskSection()
+            }
+
         }
 
-        items(5) {
-            ItemTaskSection()
-        }
-
-
-    }
 }
 
 @Composable
@@ -121,7 +116,9 @@ fun ItemTaskSection() {
         colors = CardDefaults.cardColors(containerColor = cardColor),
         border = BorderStroke(width = 0.4.dp, color = textColor)
     ) {
-        Column(modifier = Modifier.padding(16.sdp).fillMaxSize()) {
+        Column(modifier = Modifier
+            .padding(16.sdp)
+            .fillMaxSize()) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -251,7 +248,9 @@ fun ItemCategoriesSection(title: String, totalTasks: Int, icon: Int) {
 
             Text(
                 text = "${totalTasks} Pending Tasks",
-                modifier = Modifier.padding(top = 1.sdp).alpha(0.7f),
+                modifier = Modifier
+                    .padding(top = 1.sdp)
+                    .alpha(0.7f),
                 color = textColor,
                 fontSize = 13.textSdp,
                 fontWeight = FontWeight.Normal,
