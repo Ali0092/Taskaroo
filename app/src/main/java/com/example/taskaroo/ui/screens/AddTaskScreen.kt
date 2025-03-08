@@ -34,7 +34,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -151,59 +153,36 @@ fun AddTaskScreen(navController: NavController) {
                 fontWeight = FontWeight.Bold,
             )
 
-            Spacer(modifier = Modifier.height(12.sdp))
-
-            //add title
-            Text(
-                text = "Title",
-                fontSize = 14.textSdp,
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.alpha(0.7f)
-            )
-
-            var title by remember { mutableStateOf("") }
-
-            TextField(
-                value = title,
-                placeholder = { Text("Enter Title") },
-                onValueChange = { title = it },
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    errorContainerColor = Color.Transparent,
-                    cursorColor = red,
-                    focusedIndicatorColor = red,
-                    unfocusedIndicatorColor = red,
-                    focusedLabelColor = red,
-                    unfocusedLabelColor = textColor,
-                )
-            )
             Spacer(modifier = Modifier.height(8.sdp))
-
-            var body by remember { mutableStateOf("") }
-
-            TextField(
-                value = body,
-                placeholder = { Text("Enter Details") },
-                onValueChange = { body = it },
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    errorContainerColor = Color.Transparent,
-                    cursorColor = red,
-                    focusedIndicatorColor = red,
-                    unfocusedIndicatorColor = red,
-                    focusedLabelColor = red,
-                    unfocusedLabelColor = textColor,
-                )
-            )
-
+            CustomTextField(placeHolderText = "Enter Title")
+            CustomTextField(placeHolderText = "Description")
         }
     }
 
+}
+
+@Composable
+fun CustomTextField( placeHolderText: String) {
+    var text by remember { mutableStateOf("") }
+
+    TextField(
+        value = text,
+        placeholder = { Text(placeHolderText) },
+        onValueChange = { text = it },
+        modifier = Modifier.fillMaxWidth().padding(0.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            errorContainerColor = Color.Transparent,
+            cursorColor = red,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedLabelColor = red,
+            unfocusedLabelColor = textColor,
+        ),
+        shape = RectangleShape,
+        textStyle = TextStyle(fontSize = 20.textSdp),
+    )
 }
 
 @Composable
