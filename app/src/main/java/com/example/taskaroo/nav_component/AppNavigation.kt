@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.example.taskaroo.ui.screens.AddTaskScreen
 import com.example.taskaroo.ui.screens.CreateProfile
 import com.example.taskaroo.ui.screens.MainScreen
 import com.example.taskaroo.ui.screens.OnBoardingScreen
@@ -60,8 +61,7 @@ fun AppsNavHost(
         }
 
         composable(SimpleScreenNavigationItem.Signup.route) {
-            MainScreen()
-//            SignUpScreen(navController = navController)
+            SignUpScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.UserProfile.route) {
@@ -69,7 +69,11 @@ fun AppsNavHost(
         }
 
         composable(SimpleScreenNavigationItem.Main.route) {
-            MainScreen()
+            MainScreen(navController)
+        }
+
+        composable(SimpleScreenNavigationItem.AddTask.route) {
+            AddTaskScreen(navController)
         }
 
     }

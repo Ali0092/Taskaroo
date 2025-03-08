@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.taskaroo.nav_component.AppsNavHost
 import com.example.taskaroo.ui.theme.TaskarooTheme
+import com.example.taskaroo.ui.theme.backgroundColor
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
 
@@ -15,9 +17,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TaskarooTheme {
+                val systemUiController = rememberSystemUiController()
+                systemUiController.setSystemBarsColor(
+                    color = backgroundColor
+                )
                 AppsNavHost(navController = rememberNavController())
             }
         }
     }
 
 }
+

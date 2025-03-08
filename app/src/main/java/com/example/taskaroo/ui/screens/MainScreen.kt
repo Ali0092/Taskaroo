@@ -1,21 +1,17 @@
 package com.example.taskaroo.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,17 +20,17 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,10 +43,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.model.CategoryModel
+import com.example.taskaroo.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.green
@@ -58,45 +56,66 @@ import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 
 @Composable
-fun MainScreen() {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-    ) {
-        item {
-            TopBar()
-            Spacer(Modifier.height(16.sdp))
-            SearchBar()
-            Spacer(Modifier.height(24.sdp))
-            SectionCategories()
-            Spacer(Modifier.height(24.sdp))
-            SectionTasks()
+fun MainScreen(navController: NavController) {
+
+    Scaffold(
+        topBar = {},
+        bottomBar = {},
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                navController.navigate(SimpleScreenNavigationItem.AddTask.route)
+            },
+                containerColor = red) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+        },
+        content = {innerPadding->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(backgroundColor)
+            ) {
+                item {
+                    TopBar()
+                    Spacer(Modifier.height(16.sdp))
+                    SearchBar()
+                    Spacer(Modifier.height(24.sdp))
+                    SectionCategories()
+                    Spacer(Modifier.height(24.sdp))
+                    SectionTasks()
+                }
+            }
         }
-    }
+    )
+
 }
 
 @Composable
 fun SectionTasks() {
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 21.sdp, vertical = 12.sdp)
-        ) {
-                Text(
-                    text = "Ongoing Tasks",
-                    color = textColor,
-                    fontSize = 18.textSdp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.height(8.sdp))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 21.sdp, vertical = 12.sdp)
+    ) {
+        Text(
+            text = "Ongoing Tasks",
+            color = textColor,
+            fontSize = 18.textSdp,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(8.sdp))
 
-            repeat(10) {time->
-                ItemTaskSection()
-            }
-
+        repeat(1) { time ->
+            ItemTaskSection()
         }
+
+    }
 
 }
 
@@ -116,9 +135,11 @@ fun ItemTaskSection() {
         colors = CardDefaults.cardColors(containerColor = cardColor),
         border = BorderStroke(width = 0.4.dp, color = textColor)
     ) {
-        Column(modifier = Modifier
-            .padding(16.sdp)
-            .fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .padding(16.sdp)
+                .fillMaxSize()
+        ) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -135,20 +156,17 @@ fun ItemTaskSection() {
 
                 Card(
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = red),
+                    colors = CardDefaults.cardColors(containerColor = green),
                     border = BorderStroke(width = 0.4.dp, color = textColor)
                 ) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 8.sdp, vertical = 2.sdp),
+                        modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
                         text = "High",
                         color = textColor,
-                        fontSize = 12.textSdp)
+                        fontSize = 12.textSdp
+                    )
                 }
 
-
-                Spacer(modifier = Modifier.width(8.sdp))
-
-                Text(text = "Days left 1 ", color = green, fontSize = 10.textSdp)
 
             }
 
@@ -167,7 +185,12 @@ fun ItemTaskSection() {
 
             Row(modifier = Modifier.fillMaxWidth()) {
 
-                Icon(imageVector = Icons.Rounded.Notifications, contentDescription = null, tint = red, modifier = Modifier.size(20.sdp))
+                Icon(
+                    imageVector = Icons.Rounded.Notifications,
+                    contentDescription = null,
+                    tint = red,
+                    modifier = Modifier.size(20.sdp)
+                )
 
                 Spacer(modifier = Modifier.width(5.sdp))
 
@@ -279,7 +302,7 @@ fun SearchBar() {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.sdp, horizontal = 16.sdp)
+            .padding(vertical = 4.sdp, horizontal = 24.sdp)
             .background(Color.Transparent)
             .clickable {},
         shape = CircleShape,
@@ -320,7 +343,7 @@ fun TopBar() {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth()
-            .padding(top = 60.sdp, start = 21.sdp, end = 21.sdp)
+            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
