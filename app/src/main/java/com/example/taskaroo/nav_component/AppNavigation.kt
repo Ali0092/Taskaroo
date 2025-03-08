@@ -1,6 +1,5 @@
 package com.example.taskaroo.nav_component
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
@@ -11,11 +10,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.example.taskaroo.ui.screens.AddTaskScreen
-import com.example.taskaroo.ui.screens.CreateProfile
-import com.example.taskaroo.ui.screens.MainScreen
-import com.example.taskaroo.ui.screens.OnBoardingScreen
-import com.example.taskaroo.ui.screens.SignUpScreen
+import com.example.taskaroo.presentation.screens.AddTaskScreen
+import com.example.taskaroo.presentation.screens.CreateProfile
+import com.example.taskaroo.presentation.screens.MainScreen
+import com.example.taskaroo.presentation.screens.OnBoardingScreen
+import com.example.taskaroo.presentation.screens.SignUpScreen
 
 enum class Screens{
     ONBOARDING,
@@ -47,7 +46,7 @@ sealed class BottomNavigationItem(val route: String, val icon: ImageVector, val 
 fun AppsNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    startDestination: String = SimpleScreenNavigationItem.Main.route) {
+    startDestination: String ) {
 
 
     NavHost(

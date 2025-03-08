@@ -1,4 +1,4 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

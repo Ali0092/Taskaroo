@@ -1,8 +1,8 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,22 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -38,15 +34,24 @@ import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
-import com.example.taskaroo.components.DotIndicator
+import com.example.taskaroo.data.datastore.DataStoreManager
+import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.model.PagerModel
 import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @Composable
-fun OnBoardingScreen(navController: NavController) {
+fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreManager = get()) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val isOnBoardingDone = dataStoreManager.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = false)
+
+    Log.d("checkingOnBoardingStatus", "OnBoardingScreen: ${isOnBoardingDone.value}")
 
     val picturesList = listOf(
         PagerModel(
@@ -125,7 +130,10 @@ fun OnBoardingScreen(navController: NavController) {
 
 
         ElevatedButton(onClick = {
-            navController.navigate(Screens.SIGNUP.name)
+            coroutineScope.launch(IO) {
+                dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
+            }
+            navController.navigate(Screens.USER_PROFILE.name)
         },
             colors = ButtonDefaults.buttonColors(containerColor = red)
         ) {
@@ -139,35 +147,6 @@ fun OnBoardingScreen(navController: NavController) {
             )
         }
 
-
-        //register with email
-//        Card(
-//            modifier = Modifier
-//                .background(Color.Transparent)
-//                .clickable {
-//                    navController.navigate(Screens.SIGNUP.name)
-//                },
-//            shape = CircleShape,
-//            colors = CardDefaults.cardColors(containerColor = red),
-//        ) {
-//            Row(
-//                modifier = Modifier
-//                    .wrapContentWidth()
-//                    .padding(vertical = 12.sdp, horizontal = 21.sdp),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center,
-//
-//                ) {
-////                Image(
-////                    imageVector =  Icons.Rounded.PlayArrow,
-////                    contentDescription = null, modifier = Modifier.size(25.sdp),
-////                    colorFilter = ColorFilter.tint(textColor)
-////                )
-//
-//
-//
-//            }
-//        }
         Spacer(modifier = Modifier.weight(1f))
 
     }

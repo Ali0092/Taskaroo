@@ -1,4 +1,4 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -65,12 +65,12 @@ fun AddTaskScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding()
-                .padding(top = 44.sdp, start = 24.sdp, end = 24.sdp)
+                .padding(top = 44.sdp)
         ) {
 
             //top row
             Row(
-                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().padding(start = 24.sdp, end = 24.sdp), verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Icon(
@@ -94,7 +94,6 @@ fun AddTaskScreen(navController: NavController) {
             }
 
 
-
             Spacer(modifier = Modifier.height(24.sdp))
             //time and priority
             Text(
@@ -102,12 +101,13 @@ fun AddTaskScreen(navController: NavController) {
                 fontSize = 18.textSdp,
                 color = textColor,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
             )
 
             Spacer(modifier = Modifier.height(16.sdp))
 
             //cat and priority
-            Row {
+            Row(modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)) {
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_priority,
@@ -126,7 +126,7 @@ fun AddTaskScreen(navController: NavController) {
 
             }
             Spacer(modifier = Modifier.height(12.sdp))
-            Row {
+            Row(modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)) {
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_clock,
@@ -151,6 +151,7 @@ fun AddTaskScreen(navController: NavController) {
                 fontSize = 18.textSdp,
                 color = textColor,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
             )
 
             Spacer(modifier = Modifier.height(8.sdp))
@@ -169,7 +170,7 @@ fun CustomTextField( placeHolderText: String) {
         value = text,
         placeholder = { Text(placeHolderText) },
         onValueChange = { text = it },
-        modifier = Modifier.fillMaxWidth().padding(0.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.sdp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,

@@ -1,6 +1,7 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,6 +56,7 @@ import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(navController: NavController) {
 
@@ -80,43 +82,34 @@ fun MainScreen(navController: NavController) {
                     .padding(innerPadding)
                     .background(backgroundColor)
             ) {
-                item {
+
+                stickyHeader {
                     TopBar()
-                    Spacer(Modifier.height(16.sdp))
+                }
+                item {
                     SearchBar()
                     Spacer(Modifier.height(24.sdp))
+                }
+                item{
                     SectionCategories()
                     Spacer(Modifier.height(24.sdp))
-                    SectionTasks()
+                }
+                item {
+                    Text(
+                        text = "Ongoing Tasks",
+                        color = textColor,
+                        fontSize = 18.textSdp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 24.sdp)
+                    )
+                    Spacer(modifier = Modifier.height(8.sdp))
+                }
+                items(5) {
+                    ItemTaskSection()
                 }
             }
         }
     )
-
-}
-
-@Composable
-fun SectionTasks() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 21.sdp, vertical = 12.sdp)
-    ) {
-        Text(
-            text = "Ongoing Tasks",
-            color = textColor,
-            fontSize = 18.textSdp,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(modifier = Modifier.height(8.sdp))
-
-        repeat(1) { time ->
-            ItemTaskSection()
-        }
-
-    }
-
 }
 
 @Composable
@@ -127,7 +120,7 @@ fun ItemTaskSection() {
             .background(Color.Transparent)
             .fillMaxWidth()
             .height(180.sdp)
-            .padding(top = 16.sdp)
+            .padding(top = 16.sdp, start = 24.sdp, end = 24.sdp)
             .clickable {
 
             },
@@ -225,7 +218,7 @@ fun SectionCategories() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 21.sdp)
+            .padding(horizontal = 24.sdp)
     ) {
         Text(
             text = "Categories",
@@ -309,7 +302,7 @@ fun SearchBar() {
         colors = CardDefaults.cardColors(containerColor = cardColor),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.sdp, horizontal = 21.sdp),
+            modifier = Modifier.padding(vertical = 12.sdp, horizontal = 24.sdp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
 
@@ -343,7 +336,8 @@ fun TopBar() {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth()
-            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp)
+            .background(backgroundColor)
+            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(

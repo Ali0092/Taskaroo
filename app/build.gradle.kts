@@ -61,7 +61,18 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
 
+    //accompanist
     implementation(libs.accompanist.systemuicontroller)
+
+    //koin
+    implementation(libs.koin.androidx.compose)
+
+    //Coil
+    implementation(libs.coil.compose)
+
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
 
 
 }

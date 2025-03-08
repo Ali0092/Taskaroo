@@ -1,4 +1,4 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,12 +37,23 @@ import androidx.compose.ui.unit.dp
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.model.PrefsModel
+import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.liteDarkGray
 import com.example.taskaroo.ui.theme.red
 
 @Composable
 fun SelectPreferences() {
+
+    var selectedPreferences = remember { mutableStateListOf("") }
+
+    val prefsList = listOf(
+        PrefsModel(R.drawable.user,"Personal"),
+        PrefsModel(R.drawable.working,"Work"),
+        PrefsModel(R.drawable.education,"Education")
+    )
+
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.padding(top = 24.sdp),
@@ -62,27 +74,33 @@ fun SelectPreferences() {
         Spacer(modifier = Modifier.height(24.sdp))
 
         Column {
-            PreferenceSingleItem(R.drawable.user,"Personal")
-            Spacer(modifier = Modifier.height(12.sdp))
-            PreferenceSingleItem(R.drawable.working, "Work")
-            Spacer(modifier = Modifier.height(12.sdp))
-            PreferenceSingleItem(R.drawable.education, "Education")
+            repeat(prefsList.size) { index->
+                PreferenceSingleItem(prefsList[index].icon,prefsList[index].title) { selected->
+
+                    if (selectedPreferences.contains(selected)) {
+                        selectedPreferences.remove(selected)
+                    } else {
+                        selectedPreferences.add(selected)
+                    }
+                }
+            }
         }
 
     }
 }
 
 @Composable
-fun PreferenceSingleItem(icon: Int, title: String) {
+fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit ) {
 
     var isChecked by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = 12.sdp)
             .background(Color.Transparent),
         shape = RoundedCornerShape(5.sdp),
-        colors = CardDefaults.cardColors(containerColor = if(isChecked) liteDarkGray else Color.Transparent),
+        colors = CardDefaults.cardColors(containerColor = if(isChecked) cardColor else Color.Transparent),
         border = BorderStroke(width = 0.3.dp, color = Color.White),
     ) {
 
@@ -103,7 +121,13 @@ fun PreferenceSingleItem(icon: Int, title: String) {
             )
             Spacer(Modifier.weight(1f))
 
-            Icon(imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle, contentDescription = null, modifier = Modifier.size(25.sdp).clickable{ isChecked = !isChecked }, tint = if (isChecked) red else textColor)
+            Icon(imageVector = if (isChecked) Icons.Filled.CheckCircle else Icons.Outlined.CheckCircle,
+                contentDescription = null,
+                modifier = Modifier.size(25.sdp).clickable{
+                    isChecked = !isChecked
+                    onSelected(title)
+                },
+                tint = if (isChecked) red else textColor)
         }
 
     }

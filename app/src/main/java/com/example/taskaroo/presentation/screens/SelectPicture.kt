@@ -1,4 +1,4 @@
-package com.example.taskaroo.ui.screens
+package com.example.taskaroo.presentation.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.darkGray
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
@@ -54,7 +55,7 @@ fun SelectPicture() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkGray)
+            .background(backgroundColor)
     ) {
 
         Image(
