@@ -13,21 +13,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.taskaroo.common.sdp
+import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @Composable
-fun CreateProfile(navController: NavController) {
+fun CreateProfile(navController: NavController, dataStoreManager: DataStoreManager = get()) {
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val animationScope = rememberCoroutineScope()
@@ -59,6 +62,11 @@ fun CreateProfile(navController: NavController) {
                         buttonText.value = "Get Started !"
                         pagerState.animateScrollToPage(1)
                     }else {
+                        //1.Store it in Room
+                        //TODO()
+                        //2.Update in dataStore
+                        dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
+                        //3.navigate to next
                         navController.navigate(Screens.MAIN.name)
                     }
                 }

@@ -33,12 +33,17 @@ class MainActivity : ComponentActivity() {
                 )
                 val dataStoreManage: DataStoreManager = get()
                 val isOnBoardingDone = dataStoreManage.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = null)
+                val isUserProfileCreated = dataStoreManage.getBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY).collectAsState(initial = null)
 
                 var startDestination by remember { mutableStateOf<String?>(null) }
 
                 LaunchedEffect(isOnBoardingDone.value) {
                     if (isOnBoardingDone.value!=null) {
-                        startDestination = if (isOnBoardingDone.value==true) Screens.USER_PROFILE.name else Screens.ONBOARDING.name
+                        startDestination = if (isOnBoardingDone.value==true) { //checks if onboarding is done or not
+                            if (isUserProfileCreated.value==true) { //checks if user profile is created or not
+                                Screens.MAIN.name
+                            }else Screens.USER_PROFILE.name
+                        }  else Screens.ONBOARDING.name
                     }
                 }
 
