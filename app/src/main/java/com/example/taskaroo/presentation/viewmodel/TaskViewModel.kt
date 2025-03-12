@@ -22,9 +22,14 @@ class TaskViewModel(
 ): ViewModel() {
 
     private val _tasks = MutableStateFlow(TasksViewState())
-    val task: StateFlow<TasksViewState> = _tasks
+    val tasks: StateFlow<TasksViewState> = _tasks
+
+    private val _taskToBeAdded = MutableStateFlow<Task>(Task())
+    val taskToBeAdded: StateFlow<Task> = _taskToBeAdded
 
     init {
+        _tasks.value = TasksViewState()
+        _taskToBeAdded.value = Task()
         getTaskLists()
     }
 
@@ -40,9 +45,11 @@ class TaskViewModel(
         }
     }
 
-    fun createTask(task: Task) {
-        viewModelScope.launch {
-            createTaskUseCase(task)
+    fun createTask() {
+        _taskToBeAdded.value.let { task->
+            viewModelScope.launch {
+                createTaskUseCase(task)
+            }
         }
     }
 

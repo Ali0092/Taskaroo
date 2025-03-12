@@ -1,9 +1,12 @@
 package com.example.taskaroo.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,15 +14,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -35,15 +43,19 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
@@ -52,9 +64,12 @@ import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.orange
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
+import org.koin.androidx.compose.get
 
 @Composable
-fun AddTaskScreen(navController: NavController) {
+fun AddTaskScreen(
+    navController: NavController, taskViewModel: TaskViewModel = get()
+) {
 
     Box(
         modifier = Modifier
@@ -67,16 +82,22 @@ fun AddTaskScreen(navController: NavController) {
                 .padding()
                 .padding(top = 44.sdp)
         ) {
-
             //top row
             Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 24.sdp, end = 24.sdp), verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.sdp, end = 24.sdp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowLeft,
                     contentDescription = null,
-                    modifier = Modifier.size(25.sdp),
+                    modifier = Modifier
+                        .size(25.sdp)
+                        .clickable {
+                            navController.popBackStack()
+                        },
                     tint = textColor
                 )
 
@@ -86,9 +107,19 @@ fun AddTaskScreen(navController: NavController) {
                     color = textColor,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f),
+                )
+
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
                     modifier = Modifier
-                        .weight(1f)
-                        .offset(x = (-15).sdp),
+                        .size(25.sdp)
+                        .clickable {
+//                        taskViewModel.createTask()
+                            navController.popBackStack()
+                        },
+                    tint = textColor
                 )
 
             }
@@ -114,7 +145,9 @@ fun AddTaskScreen(navController: NavController) {
                     title = "Priority",
                     subTitle = "Normal",
                     tint = blue,
-                )
+                ) {
+
+                }
                 Spacer(modifier = Modifier.width(12.sdp))
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
@@ -122,7 +155,9 @@ fun AddTaskScreen(navController: NavController) {
                     title = "Category",
                     subTitle = "Default",
                     tint = orange,
-                )
+                ) {
+
+                }
 
             }
             Spacer(modifier = Modifier.height(12.sdp))
@@ -133,7 +168,9 @@ fun AddTaskScreen(navController: NavController) {
                     title = "Start Time",
                     subTitle = "12-12-2024",
                     tint = green,
-                )
+                ) {
+
+                }
                 Spacer(modifier = Modifier.width(12.sdp))
                 //timeEnd
                 ItemTimeAndPriority(
@@ -142,7 +179,9 @@ fun AddTaskScreen(navController: NavController) {
                     title = "End Time",
                     subTitle = "12-12-2025",
                     tint = Purple40,
-                )
+                ) {
+
+                }
             }
             Spacer(modifier = Modifier.height(24.sdp))
 
@@ -163,14 +202,17 @@ fun AddTaskScreen(navController: NavController) {
 }
 
 @Composable
-fun CustomTextField( placeHolderText: String) {
+fun CustomTextField(placeHolderText: String) {
+
     var text by remember { mutableStateOf("") }
 
     TextField(
         value = text,
         placeholder = { Text(placeHolderText) },
         onValueChange = { text = it },
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.sdp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.sdp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
@@ -192,14 +234,23 @@ fun ItemTimeAndPriority(
     icon: Int,
     title: String,
     subTitle: String,
-    tint: Color
+    tint: Color,
+    getClicked: () -> Unit = {}
 ) {
+
+    var canShowDialog by remember { mutableStateOf(false) }
+    var context = LocalContext.current
+
+    TaskPriorityDialog(showDialog = canShowDialog, onDismiss = { }, onAdd = { selected ->
+        Toast.makeText(context, selected, Toast.LENGTH_SHORT).show()
+    })
+
     Card(
         modifier = modifier
             .background(Color.Transparent)
             .height(70.sdp)
             .clickable {
-
+                canShowDialog = true
             },
         shape = RoundedCornerShape(20.sdp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
@@ -228,10 +279,97 @@ fun ItemTimeAndPriority(
                 )
                 Spacer(modifier = Modifier.width(2.sdp))
                 Text(
-                    text = subTitle,
-                    fontSize = 14.textSdp,
-                    color = textColor
+                    text = subTitle, fontSize = 14.textSdp, color = textColor
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun TaskPriorityDialog(
+    showDialog: Boolean, onDismiss: () -> Unit, onAdd: (String) -> Unit
+) {
+    if (showDialog) {
+        Dialog(onDismissRequest = onDismiss) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(cardColor, shape = RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier.padding(vertical = 24.sdp, horizontal = 16.sdp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    // Title
+                    Text(
+                        "Select Task Priority",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Priority Dropdown
+                    val priorities = listOf("Low", "Medium", "High")
+                    var selectedPriority by remember { mutableStateOf(priorities[0]) }
+                    var expanded by remember { mutableStateOf(false) }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                            .clickable { expanded = true }
+                            .padding(12.dp),
+                        contentAlignment = Alignment.CenterStart) {
+
+                        Text(selectedPriority, color = textColor)
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            containerColor = backgroundColor,
+                            onDismissRequest = { expanded = false }) {
+                            priorities.forEach { priority ->
+                                DropdownMenuItem(text = { Text(priority) }, onClick = {
+                                    selectedPriority = priority
+                                    expanded = false
+                                })
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            modifier = Modifier.clickable {
+                            onDismiss()
+                        }, text = "Cancel",
+                            fontSize = 16.textSdp,
+                            color = textColor,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Button(
+                            onClick = { onAdd(selectedPriority) },
+                            modifier = Modifier.padding(start = 16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = red)
+                        ) {
+                            Text("Add", color = textColor, fontSize = 16.textSdp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
             }
         }
     }

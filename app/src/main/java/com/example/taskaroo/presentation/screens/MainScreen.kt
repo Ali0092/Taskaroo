@@ -47,11 +47,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.CategoryModel
+import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
@@ -65,65 +65,85 @@ import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(navController: NavController, userViewModel: UserViewModel = get(), taskViewModel: TaskViewModel = get() ) {
+fun MainScreen(
+    navController: NavController,
+    userViewModel: UserViewModel = get(),
+    taskViewModel: TaskViewModel = get()
+) {
 
     val getUserData = userViewModel.userData.collectAsStateWithLifecycle()
+    val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = {},
-        bottomBar = {},
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate(SimpleScreenNavigationItem.AddTask.route)
-            },
-                containerColor = red) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = null,
-                    tint = Color.White
-                )
+    Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {
+        FloatingActionButton(
+            modifier = Modifier.padding(bottom = 24.sdp, end = 12.sdp),
+            onClick = {
+            navController.navigate(SimpleScreenNavigationItem.AddTask.route)
+        }, containerColor = red) {
+            Icon(
+                imageVector = Icons.Rounded.Add, contentDescription = null, tint = Color.White
+            )
+        }
+    }, content = { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(backgroundColor)
+        ) {
+            stickyHeader {
+                TopBar(getUserData.value)
             }
-        },
-        content = {innerPadding->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .background(backgroundColor)
-            ) {
-
-                stickyHeader {
-                    TopBar(getUserData.value)
-                }
-                item {
-                    SearchBar()
-                    Spacer(Modifier.height(24.sdp))
-                }
-                //do this in the end
+            item {
+//                    SearchBar()
+            }
+            //do this in the end
 //                item{
 //                    SectionCategories()
 //                    Spacer(Modifier.height(24.sdp))
 //                }
-                item {
-                    Text(
-                        text = "Ongoing Tasks",
-                        color = textColor,
-                        fontSize = 18.textSdp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 24.sdp)
-                    )
-                    Spacer(modifier = Modifier.height(8.sdp))
-                }
-                items(5) {
-                    ItemTaskSection()
-                }
+            item {
+                Text(
+                    text = "Tasks",
+                    color = textColor,
+                    fontSize = 18.textSdp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.sdp)
+                )
+                Spacer(modifier = Modifier.height(8.sdp))
             }
+            if (taskList.value.tasks == null) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .height(600.sdp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "No tasks available",
+                            color = textColor,
+                            fontSize = 14.textSdp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            } else {
+                taskList.value.tasks?.let { list ->
+                    items(list.size) { index ->
+                        ItemTaskSection(list[index])
+                    }
+                }
+
+            }
+
         }
-    )
+    })
 }
 
 @Composable
-fun ItemTaskSection() {
+fun ItemTaskSection(data: Task) {
 
     Card(
         modifier = Modifier
@@ -169,7 +189,6 @@ fun ItemTaskSection() {
                         fontSize = 12.textSdp
                     )
                 }
-
 
             }
 
@@ -341,7 +360,7 @@ fun SearchBar() {
 }
 
 @Composable
-fun TopBar(data:UserViewState) {
+fun TopBar(data: UserViewState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -373,7 +392,7 @@ fun TopBar(data:UserViewState) {
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             border = BorderStroke(width = 0.4.dp, color = textColor)
         ) {
-            if (data.user!=null){
+            if (data.user != null) {
                 Log.d("getUserDataLogsd", "TopBar: ${data.user.image}")
 //                AsyncImage(
 //                    model = data.user.image.toString(),
@@ -387,7 +406,7 @@ fun TopBar(data:UserViewState) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
-            }else {
+            } else {
                 Image(
                     painter = painterResource(R.drawable.onboarding_1),
                     contentDescription = null,
