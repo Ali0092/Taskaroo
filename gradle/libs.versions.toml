@@ -18,6 +18,7 @@ runtimeLivedata = "1.7.7"
 coilCompose = "2.0.0-rc01"
 koinAndroidxCompose = "3.2.0"
 kotlinRef = "2.0.21-1.0.27"
+protoliteWellKnownTypes = "18.0.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -43,6 +44,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "runtimeLivedata" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
+protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

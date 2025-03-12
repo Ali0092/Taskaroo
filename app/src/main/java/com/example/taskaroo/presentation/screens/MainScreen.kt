@@ -62,6 +62,8 @@ import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -145,6 +147,8 @@ fun MainScreen(
 @Composable
 fun ItemTaskSection(data: Task) {
 
+    val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
     Card(
         modifier = Modifier
             .background(Color.Transparent)
@@ -169,7 +173,7 @@ fun ItemTaskSection(data: Task) {
             ) {
 
                 Text(
-                    text = "Current IDGAF Tasks",
+                    text = data.title,
                     color = textColor,
                     fontSize = 17.textSdp,
                     fontWeight = FontWeight.Bold,
@@ -184,7 +188,7 @@ fun ItemTaskSection(data: Task) {
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
-                        text = "High",
+                        text = data.priority,
                         color = textColor,
                         fontSize = 12.textSdp
                     )
@@ -195,7 +199,7 @@ fun ItemTaskSection(data: Task) {
             Spacer(modifier = Modifier.height(8.sdp))
 
             Text(
-                text = "This task is all about the IDGAF, The IDGAF means not giving fuck about people who are stupid, dont give value to you, to your emotions, time, effort",
+                text = data.description,
                 color = textColor,
                 fontSize = 12.textSdp,
                 fontWeight = FontWeight.Bold,
@@ -217,7 +221,7 @@ fun ItemTaskSection(data: Task) {
                 Spacer(modifier = Modifier.width(5.sdp))
 
                 Text(
-                    text = "12-12-2025 02:30 PM",
+                    text = dateFormater.format(data.dueDate),
                     color = textColor,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,

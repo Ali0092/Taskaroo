@@ -26,14 +26,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,7 +49,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,11 +70,23 @@ import com.example.taskaroo.ui.theme.orange
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun AddTaskScreen(
-    navController: NavController, taskViewModel: TaskViewModel = get()
+    navController: NavController,
+    taskViewModel: TaskViewModel = get()
 ) {
+
+    val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    var category by remember { mutableStateOf("Default") }
+    var priority by remember { mutableStateOf("Low") }
+    var startDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var endDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var taskTitle by remember { mutableStateOf("") }
+    var taskDetails by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -116,14 +133,13 @@ fun AddTaskScreen(
                     modifier = Modifier
                         .size(25.sdp)
                         .clickable {
-//                        taskViewModel.createTask()
-                            navController.popBackStack()
+                        taskViewModel.createTask()
+                        navController.popBackStack()
                         },
                     tint = textColor
                 )
 
             }
-
 
             Spacer(modifier = Modifier.height(24.sdp))
             //time and priority
@@ -143,20 +159,29 @@ fun AddTaskScreen(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_priority,
                     title = "Priority",
-                    subTitle = "Normal",
+                    subTitle = priority,
                     tint = blue,
-                ) {
-
+                    dialogTitle = "Select Task Priority",
+                    dialogList = listOf("Low","Medium","High"),
+                    type = 0
+                ) { p->
+                    priority = p
+                    taskViewModel.taskToBeAdded.value.copy(priority = priority)
                 }
                 Spacer(modifier = Modifier.width(12.sdp))
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_category,
                     title = "Category",
-                    subTitle = "Default",
+                    subTitle = category,
                     tint = orange,
-                ) {
-
+                    dialogTitle = "Select Task Category",
+                    dialogList = listOf("Default","Android", "Web", "Personal", "Travel", "Professional", "Art"),
+                    type = 1
+                ) { cat->
+                    //show in card
+                    category = cat
+                    taskViewModel.taskToBeAdded.value.copy(category = category)
                 }
 
             }
@@ -166,10 +191,14 @@ fun AddTaskScreen(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_clock,
                     title = "Start Time",
-                    subTitle = "12-12-2024",
+                    subTitle = dateFormater.format(Date(startDate)),
                     tint = green,
-                ) {
-
+                    dialogTitle = "Start Time",
+                    dialogList = null,
+                    type = 3
+                ) { date->
+                    startDate = date.toLong()
+                    taskViewModel.taskToBeAdded.value.copy(startDate = startDate)
                 }
                 Spacer(modifier = Modifier.width(12.sdp))
                 //timeEnd
@@ -177,10 +206,14 @@ fun AddTaskScreen(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_clock,
                     title = "End Time",
-                    subTitle = "12-12-2025",
+                    subTitle = dateFormater.format(Date(endDate)),
                     tint = Purple40,
-                ) {
-
+                    dialogTitle = "End Time",
+                    dialogList = null,
+                    type = 4
+                ) { date->
+                    endDate = date.toLong()
+                    taskViewModel.taskToBeAdded.value.copy(dueDate = endDate)
                 }
             }
             Spacer(modifier = Modifier.height(24.sdp))
@@ -194,22 +227,28 @@ fun AddTaskScreen(
             )
 
             Spacer(modifier = Modifier.height(8.sdp))
-            CustomTextField(placeHolderText = "Enter Title")
-            CustomTextField(placeHolderText = "Description")
+            CustomTextField(placeHolderText = "Enter Title", text = taskTitle, onValueChange = {
+                taskTitle = it
+                taskViewModel.taskToBeAdded.value.copy(title = taskTitle)
+            })
+            CustomTextField(placeHolderText = "Description", text = taskDetails, onValueChange = {
+                taskDetails = it
+                taskViewModel.taskToBeAdded.value.copy(description = taskDetails)
+            })
         }
     }
 
 }
 
 @Composable
-fun CustomTextField(placeHolderText: String) {
-
-    var text by remember { mutableStateOf("") }
+fun CustomTextField(placeHolderText: String, text: String, onValueChange: (String) -> Unit) {
 
     TextField(
         value = text,
         placeholder = { Text(placeHolderText) },
-        onValueChange = { text = it },
+        onValueChange = {
+            onValueChange(it)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.sdp),
@@ -234,23 +273,52 @@ fun ItemTimeAndPriority(
     icon: Int,
     title: String,
     subTitle: String,
+    dialogTitle: String,
+    dialogList: List<String>? = null,
     tint: Color,
-    getClicked: () -> Unit = {}
+    type: Int = 0,
+    onDone: (String) -> Unit
 ) {
 
     var canShowDialog by remember { mutableStateOf(false) }
-    var context = LocalContext.current
+    var canShowDatePickerDialog by remember { mutableStateOf(false) }
 
-    TaskPriorityDialog(showDialog = canShowDialog, onDismiss = { }, onAdd = { selected ->
-        Toast.makeText(context, selected, Toast.LENGTH_SHORT).show()
-    })
+    if (type==0 || type==1) {
+        TaskPriorityDialog(
+            title = dialogTitle,
+            dropDownList = dialogList,
+            showDialog = canShowDialog,
+            onDismiss = {
+                canShowDialog = false
+            }, onAdd = { selected ->
+                canShowDialog = false
+                onDone(selected)
+            }
+        )
+    }else {
+        DatePickerDialogSample(
+            showDatePicker = canShowDatePickerDialog,
+            onDismiss = {
+                canShowDatePickerDialog = false
+            },
+            onDateSelected = {
+                canShowDatePickerDialog = false
+                onDone(it.toString())
+            }
+        )
+    }
 
     Card(
         modifier = modifier
             .background(Color.Transparent)
             .height(70.sdp)
             .clickable {
-                canShowDialog = true
+                if (type==0 || type==1) {
+                    canShowDialog = true
+                } else {
+                    canShowDatePickerDialog = true
+                }
+
             },
         shape = RoundedCornerShape(20.sdp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
@@ -288,10 +356,16 @@ fun ItemTimeAndPriority(
 
 @Composable
 fun TaskPriorityDialog(
-    showDialog: Boolean, onDismiss: () -> Unit, onAdd: (String) -> Unit
+    title: String,
+    dropDownList: List<String>? = null,
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onAdd: (String) -> Unit
 ) {
     if (showDialog) {
-        Dialog(onDismissRequest = onDismiss) {
+        Dialog(onDismissRequest = {
+            onDismiss()
+        }) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -307,7 +381,7 @@ fun TaskPriorityDialog(
 
                     // Title
                     Text(
-                        "Select Task Priority",
+                        text = title,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = textColor
@@ -316,8 +390,7 @@ fun TaskPriorityDialog(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Priority Dropdown
-                    val priorities = listOf("Low", "Medium", "High")
-                    var selectedPriority by remember { mutableStateOf(priorities[0]) }
+                    var selectedPriority by remember { mutableStateOf(dropDownList?.get(0).toString()) }
                     var expanded by remember { mutableStateOf(false) }
 
                     Box(
@@ -334,7 +407,7 @@ fun TaskPriorityDialog(
                             expanded = expanded,
                             containerColor = backgroundColor,
                             onDismissRequest = { expanded = false }) {
-                            priorities.forEach { priority ->
+                            dropDownList?.forEach { priority ->
                                 DropdownMenuItem(text = { Text(priority) }, onClick = {
                                     selectedPriority = priority
                                     expanded = false
@@ -354,16 +427,19 @@ fun TaskPriorityDialog(
 
                         Text(
                             modifier = Modifier.clickable {
-                            onDismiss()
+                                onDismiss()
                         }, text = "Cancel",
-                            fontSize = 16.textSdp,
+                            fontSize = 14.textSdp,
                             color = textColor,
                             fontWeight = FontWeight.Bold
                         )
 
                         Button(
-                            onClick = { onAdd(selectedPriority) },
-                            modifier = Modifier.padding(start = 16.dp),
+                            onClick = {
+                                onAdd(selectedPriority)
+                                onDismiss()
+                            },
+                            modifier = Modifier.padding(start = 14.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = red)
                         ) {
                             Text("Add", color = textColor, fontSize = 16.textSdp, fontWeight = FontWeight.Bold)
@@ -371,6 +447,39 @@ fun TaskPriorityDialog(
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialogSample(
+    showDatePicker: Boolean,
+    onDismiss: () -> Unit,
+    onDateSelected: (Long) -> Unit
+) {
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = {
+                    val selectedDate =
+
+                    onDateSelected(datePickerState.selectedDateMillis ?: System.currentTimeMillis())
+                    onDismiss()
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 }
