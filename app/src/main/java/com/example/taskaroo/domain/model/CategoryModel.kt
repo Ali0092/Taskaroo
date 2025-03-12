@@ -1,4 +1,4 @@
-package com.example.taskaroo.model
+package com.example.taskaroo.domain.model
 
 data class CategoryModel(
     val icon:Int = 0,

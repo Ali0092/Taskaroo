@@ -1,6 +1,5 @@
 package com.example.taskaroo.presentation.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +18,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +34,7 @@ import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.presentation.components.DotIndicator
-import com.example.taskaroo.model.PagerModel
+import com.example.taskaroo.domain.model.PagerModel
 import com.example.taskaroo.nav_component.Screens
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.red
@@ -49,9 +47,6 @@ import org.koin.androidx.compose.get
 fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreManager = get()) {
 
     val coroutineScope = rememberCoroutineScope()
-    val isOnBoardingDone = dataStoreManager.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = false)
-
-    Log.d("checkingOnBoardingStatus", "OnBoardingScreen: ${isOnBoardingDone.value}")
 
     val picturesList = listOf(
         PagerModel(

@@ -1,8 +1,11 @@
 package com.example.taskaroo.presentation.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,22 +38,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.darkGray
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
+import org.koin.androidx.compose.get
 
 @Composable
-fun SelectPicture() {
+fun SelectPicture(userViewModel: UserViewModel = get()) {
 
     var name by remember { mutableStateOf("") }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            // Save URI in Room Database
+            userViewModel.setUser(userViewModel.user.value.copy(image = it.toString()))
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -112,7 +128,7 @@ fun SelectPicture() {
                     colors = CardDefaults.cardColors(containerColor =Color.Transparent),
                     border = BorderStroke(width = 0.3.dp, color = textColor)) {
                     Image(
-                        imageVector = Icons.Outlined.Person,
+                        painter = painterResource(R.drawable.onboarding_1),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize().padding(20.sdp),
@@ -123,6 +139,10 @@ fun SelectPicture() {
                 //Upload Photo
                 Card(
                     modifier = Modifier
+                        .clickable{
+                            //image picker
+                            imagePickerLauncher.launch("image/*")
+                        }
                         .fillMaxWidth()
                         .background(Color.Transparent)
                         .padding(start = 16.sdp, end = 16.sdp, top = 12.sdp),
@@ -130,6 +150,8 @@ fun SelectPicture() {
                     colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                     border = BorderStroke(width = 0.3.dp, color = Color.White),
                 ) {
+
+
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 12.sdp),
@@ -137,12 +159,6 @@ fun SelectPicture() {
                         horizontalArrangement = Arrangement.Center,
 
                         ) {
-                        Image(
-                            imageVector =  Icons.Default.AccountCircle,
-                            contentDescription = null, modifier = Modifier.size(25.sdp),
-                            colorFilter = ColorFilter.tint(textColor)
-                        )
-
                         Text(text = "Upload Photo",
                             modifier = Modifier.padding(start = 8.sdp),
                             color = textColor,

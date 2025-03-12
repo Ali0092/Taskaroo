@@ -25,7 +25,6 @@ class GetUserUserCase(
         } catch (e: Exception) {
             emit(ViewState.Error(message = e.message.toString()))
         }
-
     }
 
 }

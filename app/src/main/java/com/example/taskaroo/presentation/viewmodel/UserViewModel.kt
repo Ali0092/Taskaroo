@@ -22,8 +22,16 @@ class UserViewModel(
     private val _userData = MutableStateFlow(UserViewState())
     val userData: StateFlow<UserViewState> = _userData
 
+    private val _user = MutableStateFlow(User())
+    val user: StateFlow<User> = _user
+
     init {
+        _user.value = User()
         getUserData()
+    }
+
+    fun setUser(user: User) {
+        _user.value = user
     }
 
     private fun getUserData() {

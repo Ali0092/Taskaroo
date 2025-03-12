@@ -37,14 +37,15 @@ import androidx.compose.ui.unit.dp
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
-import com.example.taskaroo.model.PrefsModel
+import com.example.taskaroo.domain.model.PrefsModel
+import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.textColor
-import com.example.taskaroo.ui.theme.liteDarkGray
 import com.example.taskaroo.ui.theme.red
+import org.koin.androidx.compose.get
 
 @Composable
-fun SelectPreferences() {
+fun SelectPreferences(userViewModel: UserViewModel = get()) {
 
     var selectedPreferences = remember { mutableStateListOf("") }
 
@@ -80,6 +81,7 @@ fun SelectPreferences() {
                     if (selectedPreferences.contains(selected)) {
                         selectedPreferences.remove(selected)
                     } else {
+                        userViewModel.setUser(userViewModel.user.value.copy(preferences = userViewModel.user.value.preferences+selected))
                         selectedPreferences.add(selected)
                     }
                 }

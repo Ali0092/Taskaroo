@@ -7,14 +7,17 @@ import com.example.taskaroo.domain.repository.TaskRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetTasksListUseCase(private val taskRepository: TaskRepository) {
+class GetTasksListUseCase(
+    private val taskRepository: TaskRepository
+) {
 
-    operator fun invoke(): Flow<ViewState<Task>> = flow {
+    operator fun invoke(): Flow<ViewState<List<Task>>> = flow {
         try {
             emit(ViewState.Loading())
             val response = taskRepository.getTasks()
-            val responseModel = if (response.isEmpty()) listOf<Task>() else response.map { it.toTask() }
-            emit(ViewState.Success(Task()))
+            val responseModel =
+                if (response.isEmpty()) listOf<Task>() else response.map { it.toTask() }
+            emit(ViewState.Success(responseModel))
         } catch (e: Exception) {
             emit(ViewState.Error(message = e.message.toString()))
         }

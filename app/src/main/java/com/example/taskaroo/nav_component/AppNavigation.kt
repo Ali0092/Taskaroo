@@ -14,11 +14,9 @@ import com.example.taskaroo.presentation.screens.AddTaskScreen
 import com.example.taskaroo.presentation.screens.CreateProfile
 import com.example.taskaroo.presentation.screens.MainScreen
 import com.example.taskaroo.presentation.screens.OnBoardingScreen
-import com.example.taskaroo.presentation.screens.SignUpScreen
 
 enum class Screens{
     ONBOARDING,
-    SIGNUP,
     USER_PROFILE,
     MAIN,
     HOME,
@@ -30,7 +28,6 @@ enum class Screens{
 //this is our simple screen navigation
 sealed class SimpleScreenNavigationItem(val route: String){
     object OnBoarding: SimpleScreenNavigationItem(Screens.ONBOARDING.name)
-    object Signup: SimpleScreenNavigationItem(Screens.SIGNUP.name)
     object UserProfile: SimpleScreenNavigationItem(Screens.USER_PROFILE.name)
     object Main: SimpleScreenNavigationItem(Screens.MAIN.name)
     object AddTask: SimpleScreenNavigationItem(Screens.ADD_TASK.name)
@@ -57,10 +54,6 @@ fun AppsNavHost(
 
         composable(SimpleScreenNavigationItem.OnBoarding.route) {
             OnBoardingScreen(navController = navController)
-        }
-
-        composable(SimpleScreenNavigationItem.Signup.route) {
-            SignUpScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.UserProfile.route) {

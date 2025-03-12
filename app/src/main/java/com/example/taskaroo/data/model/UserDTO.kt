@@ -10,7 +10,7 @@ data class UserDTO(
     val id: Long = 0,
     var name: String = "",
     var image: String = "",
-    val preferences: List<String> = emptyList()
+    val preferences: String = ""
 )
 
 fun UserDTO.toUser(): User {

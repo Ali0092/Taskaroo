@@ -48,7 +48,7 @@ import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
-import com.example.taskaroo.model.CategoryModel
+import com.example.taskaroo.domain.model.CategoryModel
 import com.example.taskaroo.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.cardColor

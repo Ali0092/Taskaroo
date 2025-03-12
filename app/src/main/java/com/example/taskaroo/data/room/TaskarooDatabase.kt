@@ -8,6 +8,8 @@ import com.example.taskaroo.data.model.UserDTO
 @Database(entities = [TaskDTO::class, UserDTO::class], version = 1, exportSchema = false)
 abstract class TaskarooDatabase : RoomDatabase() {
 
-    abstract fun taskDao(): TaskDao
+    abstract fun getTaaskDao(): TaskDao
+
+    abstract fun getUserDao(): UserDao
 
 }

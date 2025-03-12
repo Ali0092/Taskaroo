@@ -10,18 +10,15 @@ import com.example.taskaroo.data.model.TaskDTO
 import com.example.taskaroo.data.model.UserDTO
 
 @Dao
-interface TaskDao {
+interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createTask(taskDTO: TaskDTO)
+    suspend fun createUser(userDTO: UserDTO)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateTask(taskDTO: TaskDTO)
+    suspend fun updateUserData(userDTO: UserDTO)
 
-    @Delete
-    suspend fun deleteTask(taskDTO: TaskDTO)
-
-    @Query("SELECT * FROM task")
-    suspend fun getTasks(): List<TaskDTO>
+    @Query("SELECT * FROM user")
+    suspend fun getUserData(): UserDTO
 
 }
