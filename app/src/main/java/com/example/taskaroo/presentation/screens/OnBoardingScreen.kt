@@ -35,7 +35,7 @@ import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.domain.model.PagerModel
-import com.example.taskaroo.nav_component.Screens
+import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor

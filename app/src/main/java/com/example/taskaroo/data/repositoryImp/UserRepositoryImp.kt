@@ -1,7 +1,6 @@
 package com.example.taskaroo.data.repositoryImp
 
 import com.example.taskaroo.data.model.UserDTO
-import com.example.taskaroo.data.room.TaskDao
 import com.example.taskaroo.data.room.UserDao
 import com.example.taskaroo.domain.repository.UserRepository
 
@@ -15,7 +14,7 @@ class UserRepositoryImp(val userDao: UserDao): UserRepository {
         userDao.updateUserData(userDTO)
     }
 
-    override suspend fun getUserData(): UserDTO {
+    override suspend fun getUserData(): List<UserDTO> {
         return userDao.getUserData()
     }
 

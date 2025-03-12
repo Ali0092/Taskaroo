@@ -25,13 +25,13 @@ val appModule = module {
 
     //data sources
     single { DataStoreManager(androidContext()) }
-    single {
-        Room.databaseBuilder(androidContext(), TaskarooDatabase::class.java, "app_database")
+    single<TaskarooDatabase> {
+        Room.databaseBuilder(androidContext(), TaskarooDatabase::class.java, "app_database").build()
     }
 
     //daos
-    factory { get<TaskarooDatabase>().getUserDao()}
-    factory { get<TaskarooDatabase>().getTaaskDao() }
+    factory<UserDao> { get<TaskarooDatabase>().getUserDao()}
+    factory<TaskDao> { get<TaskarooDatabase>().getTaaskDao() }
 
     //repos
     factory<UserRepository>{ UserRepositoryImp(get<UserDao>()) }

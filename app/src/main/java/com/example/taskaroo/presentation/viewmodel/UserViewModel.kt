@@ -1,5 +1,6 @@
 package com.example.taskaroo.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taskaroo.common.ViewState
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 class UserViewModel(
     val createUserUserCase: CreateUserUserCase,
     val updateUserUserCase: UpdateUserUserCase,
-    val getUserUserCase: GetUserUserCase): ViewModel() {
+    val getUserUserCase: GetUserUserCase
+): ViewModel() {
 
     private val _userData = MutableStateFlow(UserViewState())
     val userData: StateFlow<UserViewState> = _userData
@@ -35,19 +37,26 @@ class UserViewModel(
     }
 
     private fun getUserData() {
+        Log.d("getUserDataLogsd", "getUserData: vm called")
         if (_userData.value.user==null) {
-            getUserUserCase().onEach { state->
-                when(state){
-                    is ViewState.Loading -> _userData.value = UserViewState(isLoading = true)
-                    is ViewState.Success -> _userData.value = state.data?.let { UserViewState(user = it) }!!
-                    is ViewState.Error -> _userData.value = UserViewState(error= state.message)
+            Log.d("getUserDataLogsd", "getUserData: vm called its null")
+            viewModelScope.launch {
+                getUserUserCase().collect { state->
+                    Log.d("getUserDataLogsd", "getUserData: vm called its null issode ${state.data}, ${state.message}")
+                    when(state){
+                        is ViewState.Loading -> _userData.value = UserViewState(isLoading = true)
+                        is ViewState.Success -> _userData.value = state.data?.let { UserViewState(user = it) }!!
+                        is ViewState.Error -> _userData.value = UserViewState(error= state.message)
+                    }
                 }
-            }.launchIn(viewModelScope)
+            }
         }
     }
-    fun createUserData(user: User) {
-        viewModelScope.launch {
-            createUserUserCase(user)
+    fun createUserData() {
+        _user.value.let { it->
+            viewModelScope.launch {
+                createUserUserCase(it)
+            }
         }
     }
 

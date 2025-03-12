@@ -9,6 +9,6 @@ interface UserRepository {
 
     suspend fun updateUserData(userDTO: UserDTO)
 
-    suspend fun getUserData(): UserDTO
+    suspend fun getUserData(): List<UserDTO>
 
 }

@@ -1,7 +1,6 @@
 package com.example.taskaroo.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,8 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import com.example.taskaroo.data.datastore.DataStoreManager
-import com.example.taskaroo.nav_component.AppsNavHost
-import com.example.taskaroo.nav_component.Screens
+import com.example.taskaroo.presentation.nav_component.AppsNavHost
+import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController

@@ -1,5 +1,6 @@
 package com.example.taskaroo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -44,21 +45,29 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.CategoryModel
-import com.example.taskaroo.nav_component.SimpleScreenNavigationItem
+import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
+import com.example.taskaroo.presentation.viewmodel.TaskViewModel
+import com.example.taskaroo.presentation.viewmodel.UserViewModel
+import com.example.taskaroo.presentation.viewstates.UserViewState
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
+import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController, userViewModel: UserViewModel = get(), taskViewModel: TaskViewModel = get() ) {
+
+    val getUserData = userViewModel.userData.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {},
@@ -84,16 +93,17 @@ fun MainScreen(navController: NavController) {
             ) {
 
                 stickyHeader {
-                    TopBar()
+                    TopBar(getUserData.value)
                 }
                 item {
                     SearchBar()
                     Spacer(Modifier.height(24.sdp))
                 }
-                item{
-                    SectionCategories()
-                    Spacer(Modifier.height(24.sdp))
-                }
+                //do this in the end
+//                item{
+//                    SectionCategories()
+//                    Spacer(Modifier.height(24.sdp))
+//                }
                 item {
                     Text(
                         text = "Ongoing Tasks",
@@ -331,7 +341,7 @@ fun SearchBar() {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(data:UserViewState) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -341,7 +351,7 @@ fun TopBar() {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Hi Falana Dhimkana",
+                text = data.user?.name.toString(),
                 color = textColor,
                 fontSize = 21.textSdp,
                 fontWeight = FontWeight.SemiBold,
@@ -363,12 +373,29 @@ fun TopBar() {
             colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             border = BorderStroke(width = 0.4.dp, color = textColor)
         ) {
-            Image(
-                painter = painterResource(R.drawable.onboarding_3),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (data.user!=null){
+                Log.d("getUserDataLogsd", "TopBar: ${data.user.image}")
+//                AsyncImage(
+//                    model = data.user.image.toString(),
+//                    contentDescription = null,
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier.fillMaxSize()
+//                )
+                Image(
+                    painter = painterResource(R.drawable.onboarding_1),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }else {
+                Image(
+                    painter = painterResource(R.drawable.onboarding_1),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
         }
     }
 }

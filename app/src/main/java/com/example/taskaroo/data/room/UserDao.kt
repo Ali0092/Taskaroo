@@ -19,6 +19,6 @@ interface UserDao {
     suspend fun updateUserData(userDTO: UserDTO)
 
     @Query("SELECT * FROM user")
-    suspend fun getUserData(): UserDTO
+    suspend fun getUserData(): List<UserDTO>
 
 }

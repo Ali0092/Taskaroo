@@ -1,5 +1,6 @@
 package com.example.taskaroo.domain.usercases.user
 
+import android.util.Log
 import com.example.taskaroo.common.ViewState
 import com.example.taskaroo.data.model.UserDTO
 import com.example.taskaroo.data.model.toUser
@@ -19,10 +20,13 @@ class GetUserUserCase(
         try {
             emit(ViewState.Loading())
             val response = userRepository.getUserData()
-            val responseModel = if (response!=UserDTO()) User() else response.toUser()
+            Log.d("getUserDataLogsd", "invoke: ${response}")
+            val responseModel = if (response.isEmpty()) User() else response.first().toUser()
 
             emit(ViewState.Success(responseModel))
         } catch (e: Exception) {
+            Log.d("getUserDataLogsd", "invoke: ${e.message.toString()}")
+
             emit(ViewState.Error(message = e.message.toString()))
         }
     }

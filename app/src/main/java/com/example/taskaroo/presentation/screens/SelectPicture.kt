@@ -1,5 +1,6 @@
 package com.example.taskaroo.presentation.screens
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -7,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
@@ -58,12 +62,14 @@ import org.koin.androidx.compose.get
 fun SelectPicture(userViewModel: UserViewModel = get()) {
 
     var name by remember { mutableStateOf("") }
+    var image by remember { mutableStateOf<Uri?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
             // Save URI in Room Database
+            image = it
             userViewModel.setUser(userViewModel.user.value.copy(image = it.toString()))
         }
     }
@@ -122,18 +128,37 @@ fun SelectPicture(userViewModel: UserViewModel = get()) {
                     textAlign = TextAlign.Center
                 )
 
+                Spacer(Modifier.height(12.sdp))
+
                 //profilePicture Option
-                Card(modifier = Modifier.size(90.sdp).padding(vertical = 8.sdp),
+                Card(modifier = Modifier.size(150.sdp),
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor =Color.Transparent),
                     border = BorderStroke(width = 0.3.dp, color = textColor)) {
-                    Image(
-                        painter = painterResource(R.drawable.onboarding_1),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().padding(20.sdp),
-                        colorFilter = ColorFilter.tint(textColor)
-                    )
+
+                    Box(
+                        contentAlignment = Alignment.Center, // Center content inside the Card
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        if (image==null) {
+                            Image(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(100.sdp).padding(20.sdp),
+                                colorFilter = ColorFilter.tint(textColor)
+                            )
+                        }else {
+                            AsyncImage(
+                                model = image, // URL, URI, or DrawableRes
+                                contentDescription = "Loaded Image",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+
+
                 }
 
                 //Upload Photo
@@ -160,7 +185,6 @@ fun SelectPicture(userViewModel: UserViewModel = get()) {
 
                         ) {
                         Text(text = "Upload Photo",
-                            modifier = Modifier.padding(start = 8.sdp),
                             color = textColor,
                             fontSize = 13.textSdp,
                             fontWeight = FontWeight.SemiBold,
@@ -172,7 +196,10 @@ fun SelectPicture(userViewModel: UserViewModel = get()) {
 
                 OutlinedTextField(
                     value = name,
-                    onValueChange = { name = it },
+                    onValueChange = {
+                        name = it
+                        userViewModel.setUser(userViewModel.user.value.copy(name = it))
+                    },
                     label = { Text("Name") },
                     placeholder = { Text("Enter your Name...") },
                     modifier = Modifier.fillMaxWidth().padding(start = 12.sdp, end = 12.sdp, top = 12.sdp),

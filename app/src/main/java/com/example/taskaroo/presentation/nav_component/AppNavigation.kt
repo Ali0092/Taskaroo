@@ -1,4 +1,4 @@
-package com.example.taskaroo.nav_component
+package com.example.taskaroo.presentation.nav_component
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home

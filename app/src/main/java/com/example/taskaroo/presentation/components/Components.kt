@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.taskaroo.nav_component.BottomNavigationItem
+import com.example.taskaroo.presentation.nav_component.BottomNavigationItem
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 
