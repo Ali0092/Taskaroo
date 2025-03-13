@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -62,6 +63,7 @@ import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
+import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
 import com.example.taskaroo.ui.theme.backgroundColor
@@ -95,6 +97,8 @@ fun AddTaskScreen(
     var endDate by remember { mutableLongStateOf(selectedTask.dueDate) }
     var taskTitle by remember { mutableStateOf(selectedTask.title) }
     var taskDetails by remember { mutableStateOf(selectedTask.description) }
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -141,9 +145,15 @@ fun AddTaskScreen(
                     modifier = Modifier
                         .size(25.sdp)
                         .clickable {
-                            if (flag==0){
+
+                            if (taskViewModel.taskToBeAdded.value == Task()) {
+                                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                                return@clickable
+                            }
+
+                            if (flag == 0) {
                                 taskViewModel.createTask()
-                            }else {
+                            } else {
                                 taskViewModel.updateTask()
                             }
                             navController.popBackStack()

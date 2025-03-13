@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
@@ -38,12 +41,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -146,12 +154,12 @@ fun MainScreen(
             } else {
                 taskList.value.tasks?.let { list ->
                     items(list.size) { index ->
-                        ItemTaskSection(list[index]) { data->
-
+                        ItemTaskSection(list[index], getClicked = { data->
                             taskViewModel.setSelectedTask(data)
                             navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
+                        }, getDeleteClicked = {
 
-                        }
+                        })
                     }
                 }
 
@@ -161,13 +169,17 @@ fun MainScreen(
     })
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTaskSection(
     data: Task,
-    getClicked: (Task) -> Unit
+    getClicked: (Task) -> Unit,
+    getDeleteClicked: (Task) -> Unit
 ) {
 
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    var showSelectionBox = remember { mutableStateOf(false) }
+    var checkIcon = remember { mutableStateOf<ImageVector>(Icons.Outlined.CheckCircle) }
 
     Card(
         modifier = Modifier
@@ -176,80 +188,123 @@ fun ItemTaskSection(
             .wrapContentHeight()
             .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
             .clickable {
+
+            }.combinedClickable(enabled = true, onClick = {
                 getClicked(data)
-            },
+            }, onLongClick = {
+                showSelectionBox.value = !showSelectionBox.value
+            }),
         shape = RoundedCornerShape(20.sdp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(16.sdp).fillMaxSize()
-        ) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = data.title,
-                    color = textColor,
-                    fontSize = 17.textSdp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    softWrap = true
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (showSelectionBox.value) {
+                Icon(
+                    imageVector = checkIcon.value,
+                    contentDescription = null,
+                    tint = green,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(12.sdp)
+                        .clickable {
+                            checkIcon.value = if (checkIcon.value==Icons.Outlined.CheckCircle) {
+                                Icons.Filled.CheckCircle
+                            }else Icons.Outlined.CheckCircle
+                        }
                 )
-
-                Spacer(modifier = Modifier.width(10.sdp))
-
-                Card(
-                    modifier = Modifier.wrapContentSize(),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = if (data.priority=="Low")blue else if(data.priority=="Medium") orange else darKRed),
-                    border = BorderStroke(width = 0.4.dp, color = textColor)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
-                        text = data.priority,
-                        color = textColor,
-                        fontSize = 12.textSdp
-                    )
-                }
-
             }
 
-            Spacer(modifier = Modifier.height(8.sdp))
+            Column(
+                modifier = Modifier.fillMaxSize().padding(16.sdp)
+            ) {
 
-            Text(
-                text = data.description,
-                color = textColor,
-                fontSize = 12.textSdp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                modifier = Modifier.alpha(0.7f)
-            )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-            Spacer(modifier = Modifier.height(8.sdp))
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = data.title,
+                        color = textColor,
+                        fontSize = 17.textSdp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        softWrap = true
+                    )
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.width(10.sdp))
 
-                Icon(
-                    imageVector = Icons.Rounded.Notifications,
-                    contentDescription = null,
-                    tint = red,
-                    modifier = Modifier.size(20.sdp)
-                )
+                    Card(
+                        modifier = Modifier.wrapContentSize(),
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(containerColor = if (data.priority=="Low")blue else if(data.priority=="Medium") orange else darKRed),
+                        border = BorderStroke(width = 0.4.dp, color = textColor)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
+                            text = data.priority,
+                            color = textColor,
+                            fontSize = 12.textSdp
+                        )
+                    }
 
-                Spacer(modifier = Modifier.width(5.sdp))
+                }
+
+                Spacer(modifier = Modifier.height(8.sdp))
 
                 Text(
-                    text =  dateFormater.format(data.startDate)+" - "+dateFormater.format(data.dueDate),
+                    text = data.description,
                     color = textColor,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 3,
+                    maxLines = 2,
+                    modifier = Modifier.alpha(0.7f)
                 )
+
+                Spacer(modifier = Modifier.height(8.sdp))
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+
+                    Icon(
+                        painter = painterResource(R.drawable.icon_category),
+                        contentDescription = null,
+                        tint = green,
+                        modifier = Modifier.size(20.sdp)
+                    )
+
+                    Spacer(modifier = Modifier.width(5.sdp))
+
+                    Text(
+                        text = data.category,
+                        color = textColor,
+                        fontSize = 12.textSdp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 3,
+                    )
+
+                    Spacer(modifier = Modifier.width(12.sdp))
+
+                    Icon(
+                        imageVector = Icons.Rounded.Notifications,
+                        contentDescription = null,
+                        tint = red,
+                        modifier = Modifier.size(20.sdp)
+                    )
+
+                    Spacer(modifier = Modifier.width(5.sdp))
+
+                    Text(
+                        text =  dateFormater.format(data.startDate)+" - "+dateFormater.format(data.dueDate),
+                        color = textColor,
+                        fontSize = 12.textSdp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 3,
+                    )
+
+                }
 
             }
 
