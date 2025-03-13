@@ -1,12 +1,12 @@
 package com.example.taskaroo.presentation.screens
 
 import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
@@ -37,18 +36,20 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -83,30 +84,25 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    navController: NavController,
-    userViewModel: UserViewModel,
-    taskViewModel: TaskViewModel = get()
+    navController: NavController, userViewModel: UserViewModel, taskViewModel: TaskViewModel = get()
 ) {
-
     val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
-    Log.d("checkingTaskAddingIssue", "getUserData: ${getUserData.value}")
-    Log.d("checkingTaskAddingIssue", "taskList: ${taskList.value}")
-
     Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {
         FloatingActionButton(
-            modifier = Modifier.padding(bottom = 24.sdp, end = 12.sdp),
-            onClick = {
+            modifier = Modifier.padding(bottom = 24.sdp, end = 12.sdp), onClick = {
                 taskViewModel.setTaskToBeAdded(Task())
                 taskViewModel.setSelectedTask(Task())
                 navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
-        }, containerColor = red) {
+            }, containerColor = red
+        ) {
             Icon(
                 imageVector = Icons.Rounded.Add, contentDescription = null, tint = Color.White
             )
         }
     }, content = { innerPadding ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -154,70 +150,91 @@ fun MainScreen(
             } else {
                 taskList.value.tasks?.let { list ->
                     items(list.size) { index ->
-                        ItemTaskSection(list[index], getClicked = { data->
+                        ItemTaskSection(list[index], getClicked = { data ->
                             taskViewModel.setSelectedTask(data)
                             navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
-                        }, getDeleteClicked = {
+                        }, getSwipe = { task ->
 
                         })
                     }
+
                 }
 
             }
 
         }
+
     })
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTaskSection(
-    data: Task,
-    getClicked: (Task) -> Unit,
-    getDeleteClicked: (Task) -> Unit
+    data: Task, getClicked: (Task) -> Unit, getSwipe: (Task) -> Unit
 ) {
 
+    lateinit var icon: ImageVector
+    lateinit var alignment: Alignment
+    var color: Color = Color.Transparent
+
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    var showSelectionBox = remember { mutableStateOf(false) }
-    var checkIcon = remember { mutableStateOf<ImageVector>(Icons.Outlined.CheckCircle) }
 
-    Card(
-        modifier = Modifier
-            .background(Color.Transparent)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
-            .clickable {
-
-            }.combinedClickable(enabled = true, onClick = {
-                getClicked(data)
-            }, onLongClick = {
-                showSelectionBox.value = !showSelectionBox.value
-            }),
-        shape = RoundedCornerShape(20.sdp),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-    ) {
-
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (showSelectionBox.value) {
-                Icon(
-                    imageVector = checkIcon.value,
-                    contentDescription = null,
-                    tint = green,
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(12.sdp)
-                        .clickable {
-                            checkIcon.value = if (checkIcon.value==Icons.Outlined.CheckCircle) {
-                                Icons.Filled.CheckCircle
-                            }else Icons.Outlined.CheckCircle
-                        }
-                )
-            }
+//    val swipeState = rememberSwipeToDismissBoxState()
+//
+//    when (swipeState.dismissDirection) {
+//        SwipeToDismissBoxValue.EndToStart -> {
+//            icon = Icons.Outlined.Delete
+//            alignment = Alignment.CenterEnd
+//            color = MaterialTheme.colorScheme.errorContainer
+//        }
+//
+//        SwipeToDismissBoxValue.StartToEnd -> {
+////            icon = Icons.Outlined.Edit
+////            alignment = Alignment.CenterStart
+////            color =
+////                Color.Green.copy(alpha = 0.3f) // You can generate theme for successContainer in themeBuilder
+//        }
+//
+//        SwipeToDismissBoxValue.Settled -> {
+//            icon = Icons.Outlined.Delete
+//            alignment = Alignment.CenterEnd
+//            color = MaterialTheme.colorScheme.errorContainer
+//
+//        }
+//    }
+//    SwipeToDismissBox(
+//        modifier = Modifier.animateContentSize(), state = swipeState, backgroundContent = {
+//            Box(
+//                contentAlignment = alignment,
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .background(color)
+//            ) {
+//                Icon(
+//                    modifier = Modifier.minimumInteractiveComponentSize(),
+//                    imageVector = icon,
+//                    contentDescription = null
+//                )
+//            }
+//        }) {
+        Card(
+            modifier = Modifier
+                .background(Color.Transparent)
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
+                .clickable {
+                    getClicked(data)
+                },
+            shape = RoundedCornerShape(20.sdp),
+            colors = CardDefaults.cardColors(containerColor = cardColor),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        ) {
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(16.sdp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.sdp)
             ) {
 
                 Row(
@@ -240,7 +257,7 @@ fun ItemTaskSection(
                     Card(
                         modifier = Modifier.wrapContentSize(),
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(containerColor = if (data.priority=="Low")blue else if(data.priority=="Medium") orange else darKRed),
+                        colors = CardDefaults.cardColors(containerColor = if (data.priority == "Low") blue else if (data.priority == "Medium") orange else darKRed),
                         border = BorderStroke(width = 0.4.dp, color = textColor)
                     ) {
                         Text(
@@ -297,20 +314,34 @@ fun ItemTaskSection(
                     Spacer(modifier = Modifier.width(5.sdp))
 
                     Text(
-                        text =  dateFormater.format(data.startDate)+" - "+dateFormater.format(data.dueDate),
+                        text = dateFormater.format(data.startDate) + " - " + dateFormater.format(
+                            data.dueDate
+                        ),
                         color = textColor,
                         fontSize = 12.textSdp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 3,
                     )
-
                 }
-
             }
-
         }
-
-    }
+//    }
+//
+//    when (swipeState.currentValue) {
+//        SwipeToDismissBoxValue.EndToStart -> {
+////            onDelete()
+//        }
+//
+//        SwipeToDismissBoxValue.StartToEnd -> {
+//            LaunchedEffect(swipeState) {
+////                onEdit()
+//                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
+//            }
+//        }
+//
+//        SwipeToDismissBoxValue.Settled -> {
+//        }
+//    }
 
 }
 

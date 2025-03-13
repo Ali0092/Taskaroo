@@ -66,6 +66,7 @@ dependencies {
 
     //accompanist
     implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.accompanist.navigation.material)
 
     //koin
     implementation(libs.koin.androidx.compose)
@@ -82,6 +83,7 @@ dependencies {
 
     //KSP
     ksp(libs.androidx.room.compiler)
+
 
 
 }
