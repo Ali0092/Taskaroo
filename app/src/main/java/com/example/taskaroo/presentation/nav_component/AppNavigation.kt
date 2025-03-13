@@ -9,11 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.taskaroo.presentation.screens.AddTaskScreen
 import com.example.taskaroo.presentation.screens.CreateProfile
 import com.example.taskaroo.presentation.screens.MainScreen
 import com.example.taskaroo.presentation.screens.OnBoardingScreen
+import org.koin.androidx.compose.koinViewModel
 
 enum class Screens{
     ONBOARDING,
@@ -61,11 +64,13 @@ fun AppsNavHost(
         }
 
         composable(SimpleScreenNavigationItem.Main.route) {
-            MainScreen(navController)
+            MainScreen(navController, koinViewModel())
         }
 
-        composable(SimpleScreenNavigationItem.AddTask.route) {
-            AddTaskScreen(navController)
+        composable(route = "${SimpleScreenNavigationItem.AddTask.route}/{flag}",
+            arguments = listOf(navArgument("flag"){type = NavType.IntType} )) {backStackEntry->
+            val flag = backStackEntry.arguments?.getInt("flag")?: 0
+            AddTaskScreen(navController, flag = flag)
         }
 
     }

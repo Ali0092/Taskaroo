@@ -3,6 +3,7 @@ package com.example.taskaroo.data.repositoryImp
 import com.example.taskaroo.data.model.TaskDTO
 import com.example.taskaroo.data.room.TaskDao
 import com.example.taskaroo.domain.repository.TaskRepository
+import kotlinx.coroutines.flow.Flow
 
 class TaskRepositoryImp(val taskDao: TaskDao) : TaskRepository {
 
@@ -18,7 +19,7 @@ class TaskRepositoryImp(val taskDao: TaskDao) : TaskRepository {
         taskDao.deleteTask(taskDTO)
     }
 
-    override suspend fun getTasks(): List<TaskDTO> {
+    override suspend fun getTasks(): Flow<List<TaskDTO>> {
         return taskDao.getTasks()
     }
 }

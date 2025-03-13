@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,6 +47,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -57,8 +61,11 @@ import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.presentation.viewstates.UserViewState
 import com.example.taskaroo.ui.theme.backgroundColor
+import com.example.taskaroo.ui.theme.blue
 import com.example.taskaroo.ui.theme.cardColor
+import com.example.taskaroo.ui.theme.darKRed
 import com.example.taskaroo.ui.theme.green
+import com.example.taskaroo.ui.theme.orange
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
@@ -69,18 +76,23 @@ import java.util.Locale
 @Composable
 fun MainScreen(
     navController: NavController,
-    userViewModel: UserViewModel = get(),
+    userViewModel: UserViewModel,
     taskViewModel: TaskViewModel = get()
 ) {
 
-    val getUserData = userViewModel.userData.collectAsStateWithLifecycle()
+    val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
+
+    Log.d("checkingTaskAddingIssue", "getUserData: ${getUserData.value}")
+    Log.d("checkingTaskAddingIssue", "taskList: ${taskList.value}")
 
     Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {
         FloatingActionButton(
             modifier = Modifier.padding(bottom = 24.sdp, end = 12.sdp),
             onClick = {
-            navController.navigate(SimpleScreenNavigationItem.AddTask.route)
+                taskViewModel.setTaskToBeAdded(Task())
+                taskViewModel.setSelectedTask(Task())
+                navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
         }, containerColor = red) {
             Icon(
                 imageVector = Icons.Rounded.Add, contentDescription = null, tint = Color.White
@@ -105,14 +117,14 @@ fun MainScreen(
 //                    Spacer(Modifier.height(24.sdp))
 //                }
             item {
-                Text(
-                    text = "Tasks",
-                    color = textColor,
-                    fontSize = 18.textSdp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 24.sdp)
-                )
-                Spacer(modifier = Modifier.height(8.sdp))
+//                Text(
+//                    text = "Tasks",
+//                    color = textColor,
+//                    fontSize = 18.textSdp,
+//                    fontWeight = FontWeight.Bold,
+//                    modifier = Modifier.padding(start = 24.sdp)
+//                )
+//                Spacer(modifier = Modifier.height(8.sdp))
             }
             if (taskList.value.tasks == null) {
                 item {
@@ -134,7 +146,12 @@ fun MainScreen(
             } else {
                 taskList.value.tasks?.let { list ->
                     items(list.size) { index ->
-                        ItemTaskSection(list[index])
+                        ItemTaskSection(list[index]) { data->
+
+                            taskViewModel.setSelectedTask(data)
+                            navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
+
+                        }
                     }
                 }
 
@@ -145,7 +162,10 @@ fun MainScreen(
 }
 
 @Composable
-fun ItemTaskSection(data: Task) {
+fun ItemTaskSection(
+    data: Task,
+    getClicked: (Task) -> Unit
+) {
 
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -153,19 +173,17 @@ fun ItemTaskSection(data: Task) {
         modifier = Modifier
             .background(Color.Transparent)
             .fillMaxWidth()
-            .height(180.sdp)
-            .padding(top = 16.sdp, start = 24.sdp, end = 24.sdp)
+            .wrapContentHeight()
+            .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
             .clickable {
-
+                getClicked(data)
             },
         shape = RoundedCornerShape(20.sdp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
-        border = BorderStroke(width = 0.4.dp, color = textColor)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.sdp)
-                .fillMaxSize()
+            modifier = Modifier.padding(16.sdp).fillMaxSize()
         ) {
 
             Row(
@@ -173,17 +191,22 @@ fun ItemTaskSection(data: Task) {
             ) {
 
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = data.title,
                     color = textColor,
                     fontSize = 17.textSdp,
                     fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = true
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(10.sdp))
 
                 Card(
+                    modifier = Modifier.wrapContentSize(),
                     shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = green),
+                    colors = CardDefaults.cardColors(containerColor = if (data.priority=="Low")blue else if(data.priority=="Medium") orange else darKRed),
                     border = BorderStroke(width = 0.4.dp, color = textColor)
                 ) {
                     Text(
@@ -203,7 +226,7 @@ fun ItemTaskSection(data: Task) {
                 color = textColor,
                 fontSize = 12.textSdp,
                 fontWeight = FontWeight.Bold,
-                maxLines = 3,
+                maxLines = 2,
                 modifier = Modifier.alpha(0.7f)
             )
 
@@ -221,7 +244,7 @@ fun ItemTaskSection(data: Task) {
                 Spacer(modifier = Modifier.width(5.sdp))
 
                 Text(
-                    text = dateFormater.format(data.dueDate),
+                    text =  dateFormater.format(data.startDate)+" - "+dateFormater.format(data.dueDate),
                     color = textColor,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
@@ -381,7 +404,7 @@ fun TopBar(data: UserViewState) {
             )
 
             Text(
-                text = "10 Pending Tasks",
+                text = "Plan it, track it, crush it!",
                 modifier = Modifier.padding(top = 3.sdp),
                 color = red,
                 fontSize = 14.textSdp,

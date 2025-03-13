@@ -19,6 +19,7 @@ import com.example.taskaroo.domain.usercases.user.UpdateUserUserCase
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
@@ -51,6 +52,6 @@ val appModule = module {
 }
 
 val viewModelModules = module {
-    single { UserViewModel(get(),get(),get()) }
+    viewModel{ UserViewModel(get(),get(),get())  }
     single { TaskViewModel(get(),get(),get(),get()) }
 }

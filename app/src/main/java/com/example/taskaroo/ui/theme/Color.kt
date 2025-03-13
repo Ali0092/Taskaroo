@@ -17,6 +17,7 @@ val cardColor = Color(0xFF3e4553)
 
 
 val red = Color(0xfffb7160) // Used for highlights, branding, and key UI elements.
+val darKRed = Color(0xFFC22424) // Used for highlights, branding, and key UI elements.
 val etxt = Color(0xffFFFFFF) // Backgrounds and clean space.
 val black = Color(0xff000000) // Text and icons for contrast.
 val darkGray = Color(0xFF282828) // Dark mode background.

@@ -1,5 +1,6 @@
 package com.example.taskaroo.domain.usercases.task
 
+import android.util.Log
 import com.example.taskaroo.common.ViewState
 import com.example.taskaroo.data.model.toTask
 import com.example.taskaroo.domain.model.Task
@@ -12,12 +13,15 @@ class GetTasksListUseCase(
 ) {
 
     operator fun invoke(): Flow<ViewState<List<Task>>> = flow {
+        Log.d("checkingTaskAddingIssue", "function called with invoke")
+
         try {
             emit(ViewState.Loading())
-            val response = taskRepository.getTasks()
-            val responseModel =
-                if (response.isEmpty()) listOf<Task>() else response.map { it.toTask() }
-            emit(ViewState.Success(responseModel))
+            taskRepository.getTasks().collect { it->
+                val responseModel =
+                    if (it.isEmpty()) listOf<Task>() else it.map { it.toTask() }
+                emit(ViewState.Success(responseModel))
+            }
         } catch (e: Exception) {
             emit(ViewState.Error(message = e.message.toString()))
         }

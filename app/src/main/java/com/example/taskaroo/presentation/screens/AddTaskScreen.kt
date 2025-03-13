@@ -1,5 +1,6 @@
 package com.example.taskaroo.presentation.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -38,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,16 +79,22 @@ import java.util.Locale
 @Composable
 fun AddTaskScreen(
     navController: NavController,
-    taskViewModel: TaskViewModel = get()
+    taskViewModel: TaskViewModel = get(),
+    flag: Int = 0
 ) {
 
+    val selectedTask by taskViewModel.selectedTask.collectAsState()
+
+    Log.d("checkingTheArgumentPassed", "AddTaskScreen: ${flag}")
+    Log.d("checkingTheArgumentPassed", "selectedTask: ${selectedTask}")
+
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    var category by remember { mutableStateOf("Default") }
-    var priority by remember { mutableStateOf("Low") }
-    var startDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    var endDate by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    var taskTitle by remember { mutableStateOf("") }
-    var taskDetails by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf(selectedTask.category) }
+    var priority by remember { mutableStateOf(selectedTask.priority) }
+    var startDate by remember { mutableLongStateOf(selectedTask.startDate) }
+    var endDate by remember { mutableLongStateOf(selectedTask.dueDate) }
+    var taskTitle by remember { mutableStateOf(selectedTask.title) }
+    var taskDetails by remember { mutableStateOf(selectedTask.description) }
 
     Box(
         modifier = Modifier
@@ -133,8 +141,12 @@ fun AddTaskScreen(
                     modifier = Modifier
                         .size(25.sdp)
                         .clickable {
-                        taskViewModel.createTask()
-                        navController.popBackStack()
+                            if (flag==0){
+                                taskViewModel.createTask()
+                            }else {
+                                taskViewModel.updateTask()
+                            }
+                            navController.popBackStack()
                         },
                     tint = textColor
                 )
@@ -166,7 +178,8 @@ fun AddTaskScreen(
                     type = 0
                 ) { p->
                     priority = p
-                    taskViewModel.taskToBeAdded.value.copy(priority = priority)
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(priority = priority))
+
                 }
                 Spacer(modifier = Modifier.width(12.sdp))
                 ItemTimeAndPriority(
@@ -181,7 +194,7 @@ fun AddTaskScreen(
                 ) { cat->
                     //show in card
                     category = cat
-                    taskViewModel.taskToBeAdded.value.copy(category = category)
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(category = category))
                 }
 
             }
@@ -198,7 +211,7 @@ fun AddTaskScreen(
                     type = 3
                 ) { date->
                     startDate = date.toLong()
-                    taskViewModel.taskToBeAdded.value.copy(startDate = startDate)
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(startDate = startDate))
                 }
                 Spacer(modifier = Modifier.width(12.sdp))
                 //timeEnd
@@ -213,7 +226,7 @@ fun AddTaskScreen(
                     type = 4
                 ) { date->
                     endDate = date.toLong()
-                    taskViewModel.taskToBeAdded.value.copy(dueDate = endDate)
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(dueDate = endDate))
                 }
             }
             Spacer(modifier = Modifier.height(24.sdp))
@@ -229,11 +242,11 @@ fun AddTaskScreen(
             Spacer(modifier = Modifier.height(8.sdp))
             CustomTextField(placeHolderText = "Enter Title", text = taskTitle, onValueChange = {
                 taskTitle = it
-                taskViewModel.taskToBeAdded.value.copy(title = taskTitle)
+                taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(title = taskTitle))
             })
             CustomTextField(placeHolderText = "Description", text = taskDetails, onValueChange = {
                 taskDetails = it
-                taskViewModel.taskToBeAdded.value.copy(description = taskDetails)
+                taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(description = taskDetails))
             })
         }
     }
@@ -313,7 +326,7 @@ fun ItemTimeAndPriority(
             .background(Color.Transparent)
             .height(70.sdp)
             .clickable {
-                if (type==0 || type==1) {
+                if (type == 0 || type == 1) {
                     canShowDialog = true
                 } else {
                     canShowDatePickerDialog = true

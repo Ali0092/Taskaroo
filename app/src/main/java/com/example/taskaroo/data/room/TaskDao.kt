@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.taskaroo.data.model.TaskDTO
 import com.example.taskaroo.data.model.UserDTO
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
@@ -22,6 +23,6 @@ interface TaskDao {
     suspend fun deleteTask(taskDTO: TaskDTO)
 
     @Query("SELECT * FROM task")
-    suspend fun getTasks(): List<TaskDTO>
+    fun getTasks(): Flow<List<TaskDTO>>
 
 }
