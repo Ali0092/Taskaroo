@@ -84,6 +84,9 @@ dependencies {
     //KSP
     ksp(libs.androidx.room.compiler)
 
+    //splash screen library
+    implementation(libs.androidx.core.splashscreen)
+
 
 
 }

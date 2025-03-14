@@ -19,8 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.taskaroo.presentation.nav_component.BottomNavigationItem
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 
@@ -46,34 +44,3 @@ fun DotIndicator(
         }
     }
 }
-
-
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-
-    val screens = listOf(
-        BottomNavigationItem.Home,
-        BottomNavigationItem.Search,
-        BottomNavigationItem.Profile
-    )
-    val currentBackStackEntry = navController.currentBackStackEntryAsState()
-
-    NavigationBar(
-        containerColor = textColor,
-    ) {
-        screens.forEach { screen->
-            val isSelected = screen.route == currentBackStackEntry.value?.destination?.route
-            NavigationBarItem(
-                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title,)},
-                label = { Text(screen.title) },
-                selected = isSelected,
-                onClick = {
-                    navController.navigate(screen.route)
-                }
-            )
-        }
-    }
-
-}
-

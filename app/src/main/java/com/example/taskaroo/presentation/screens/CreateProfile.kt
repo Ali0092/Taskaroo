@@ -25,6 +25,7 @@ import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.User
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.nav_component.Screens
+import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.textColor
@@ -34,13 +35,10 @@ import org.koin.androidx.compose.get
 
 @Composable
 fun CreateProfile(
-    navController: NavController,
-    dataStoreManager: DataStoreManager = get(),
-    userViewModel: UserViewModel = get()) {
+    navController: NavController, viewModel: PrefsViewModel, userViewModel: UserViewModel = get()) {
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val animationScope = rememberCoroutineScope()
-    val coroutineScope = rememberCoroutineScope()
     var buttonText = remember { mutableStateOf("Continue") }
     val context = LocalContext.current
 
@@ -48,14 +46,14 @@ fun CreateProfile(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
-            .padding(start = 12.sdp, end = 12.sdp, top = 44.sdp)
+            .padding(start = 24.sdp, end = 24.sdp, top = 44.sdp)
     ) {
 
         HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page->
             if (page==0){
                 SelectPreferences()
             }else {
-                SelectPicture()
+                BasicInfoScreen()
             }
         }
 
@@ -78,9 +76,7 @@ fun CreateProfile(
                                 userViewModel.setUser(userViewModel.user.value.copy(id = System.currentTimeMillis()))
                                 userViewModel.createUserData()
                                 //2.Update in dataStore
-                                coroutineScope.launch {
-                                    dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
-                                }
+                                viewModel.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
                                 //3.navigate to next
                                 navController.navigate(Screens.MAIN.name)
                             }
@@ -103,12 +99,12 @@ fun CreateProfile(
 }
 fun checkoutCreateUserValidation(user: User,canCreateUser:(Boolean,String?) -> Unit){
     user.let {
-        if (it.name.isEmpty()){
-            canCreateUser(false, "Name cannot be empty")
+        if (it.firstName.isEmpty()){
+            canCreateUser(false, "First Name cannot be empty")
         } else if(it.preferences.isEmpty()) {
             canCreateUser(false,"Please select at least one preference")
-        } else if(it.image.isEmpty()) {
-            canCreateUser(false,"Please select am image")
+        } else if(it.lastName.isEmpty()) {
+            canCreateUser(false,"Last Name is required")
         }else {
             canCreateUser(true,null)
         }

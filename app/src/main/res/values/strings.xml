@@ -2,4 +2,47 @@
     <string name="app_name">Taskaroo</string>
     <string name="buttonGetStarted">Let`s Start</string>
     <string name="onboarding_subtitle">Manage your tasks &amp; goals \nwith Taskaroo</string>
+
+    <string name="onboarding_qoute1">Manage your tasks &amp; goals \nwith Taskaroo</string>
+    <string name="onboarding_qoute1_author">Peter Parker.</string>
+    <string name="onboarding_qoute2">Focus on being productive instead of \nbusy</string>
+    <string name="onboarding_qoute2_author">– Tim Ferriss</string>
+    <string name="onboarding_qoute3">What gets measured gets \nmanaged.</string>
+    <string name="onboarding_qoute3_author">– Peter Drucker</string>
+
+
+    <string name="preference_ScreenTitle">How do you plan to user Taskaroo?</string>
+    <string name="preference_ScreenSubTitle">Choose that apply.</string>
+    <string name="preference_personal">Personal</string>
+    <string name="preference_work">Work</string>
+    <string name="preference_education">Education</string>
+
+    <string name="basic_info_ScreenTitle">Create your profile</string>
+    <string name="basic_info_ScreenSubTitle">Congratulations on taking the first step towards feeling more organized</string>
+    <string name="basic_info_ScreenInfoHeading">Need your complete name to display on your home page !</string>
+
+    <string name="removeTaskTitle">Remove Task !</string>
+    <string name="removeTaskSubTitle">Are you sure you want to Remove this task ?</string>
+
+    <!--  hints  -->
+    <string name="hintFirstName">Enter First Name...</string>
+    <string name="hintLastName">Enter Last Name...</string>
+
+    <!-- label   -->
+    <string name="labelFirstName">Fist Name</string>
+    <string name="labelLastName">Fist Name</string>
+    <string name="labelEmptyScreen">No tasks available</string>
+    <string name="labelMotivation">Plan it, track it, crush it!</string>
+    <string name="labelAddTask">Add task</string>
+
+    <!--  remove  -->
+    <string name="buttonCancel">Cancel</string>
+    <string name="buttonRemove">Remove</string>
+    <string name="buttonAdd">Add</string>
+
+    <!-- error  -->
+    <string name="errorMustFillFields">All fields must be filled</string>
+
+
+
 </resources>

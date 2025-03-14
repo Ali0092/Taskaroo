@@ -8,16 +8,16 @@ import com.example.taskaroo.domain.model.User
 data class UserDTO(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    var name: String = "",
-    var image: String = "",
+    var firstName: String = "",
+    var lastName: String = "",
     val preferences: String = ""
 )
 
 fun UserDTO.toUser(): User {
     return User(
         id = id,
-        name = name,
-        image = image,
+        firstName = firstName,
+        lastName = lastName,
         preferences = preferences
     )
 }

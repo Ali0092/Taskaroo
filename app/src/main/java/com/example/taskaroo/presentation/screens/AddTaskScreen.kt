@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -32,6 +34,8 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,6 +57,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +69,7 @@ import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.Task
+import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
 import com.example.taskaroo.ui.theme.backgroundColor
@@ -86,9 +92,6 @@ fun AddTaskScreen(
 ) {
 
     val selectedTask by taskViewModel.selectedTask.collectAsState()
-
-    Log.d("checkingTheArgumentPassed", "AddTaskScreen: ${flag}")
-    Log.d("checkingTheArgumentPassed", "selectedTask: ${selectedTask}")
 
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     var category by remember { mutableStateOf(selectedTask.category) }
@@ -146,24 +149,15 @@ fun AddTaskScreen(
                         .size(25.sdp)
                         .clickable {
 
-                            if (taskViewModel.taskToBeAdded.value == Task()) {
-                                Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
-                                return@clickable
-                            }
 
-                            if (flag == 0) {
-                                taskViewModel.createTask()
-                            } else {
-                                taskViewModel.updateTask()
-                            }
-                            navController.popBackStack()
                         },
-                    tint = textColor
+                    tint = backgroundColor
                 )
 
             }
 
             Spacer(modifier = Modifier.height(24.sdp))
+
             //time and priority
             Text(
                 text = "Pick Priority & Time",
@@ -259,6 +253,61 @@ fun AddTaskScreen(
                 taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(description = taskDetails))
             })
         }
+
+        //now add button
+        ExtendedFloatingActionButton(
+            modifier = Modifier
+                .padding(bottom = 24.sdp, end = 12.sdp)
+                .wrapContentSize()
+                .align(Alignment.BottomEnd),
+            onClick = {
+                if (taskViewModel.taskToBeAdded.value == Task()) {
+                    Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                    return@ExtendedFloatingActionButton
+                }
+                if (flag == 0) {
+                    taskViewModel.createTask()
+                } else {
+                    taskViewModel.updateTask()
+                }
+                navController.popBackStack()
+            }, containerColor = red
+        ) {
+           Row(
+               verticalAlignment = Alignment.CenterVertically,
+               horizontalArrangement = Arrangement.Center
+           ) {
+               Text(
+                   text = stringResource(R.string.labelAddTask),
+                   fontSize = 16.textSdp,
+                   color = textColor,
+                   fontWeight = FontWeight.Bold,
+                   textAlign = TextAlign.Center,
+               )
+               Spacer(modifier = Modifier.width(8.sdp))
+               Icon(
+                   imageVector = Icons.Rounded.Check,
+                   contentDescription = null,
+                   modifier = Modifier
+                       .size(25.sdp)
+                       .clickable {
+
+                           if (taskViewModel.taskToBeAdded.value == Task()) {
+                               Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                               return@clickable
+                           }
+
+                           if (flag == 0) {
+                               taskViewModel.createTask()
+                           } else {
+                               taskViewModel.updateTask()
+                           }
+                           navController.popBackStack()
+                       },
+                   tint = textColor
+               )
+           }
+        }
     }
 
 }
@@ -345,7 +394,6 @@ fun ItemTimeAndPriority(
             },
         shape = RoundedCornerShape(20.sdp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
-        border = BorderStroke(width = 0.7.dp, color = Color.LightGray)
     ) {
         Row(
             modifier = Modifier
@@ -451,7 +499,7 @@ fun TaskPriorityDialog(
                         Text(
                             modifier = Modifier.clickable {
                                 onDismiss()
-                        }, text = "Cancel",
+                        }, text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
                             color = textColor,
                             fontWeight = FontWeight.Bold
@@ -465,7 +513,12 @@ fun TaskPriorityDialog(
                             modifier = Modifier.padding(start = 14.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = red)
                         ) {
-                            Text("Add", color = textColor, fontSize = 16.textSdp, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = stringResource(R.string.buttonAdd),
+                                color = textColor,
+                                fontSize = 16.textSdp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }

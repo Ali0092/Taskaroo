@@ -36,6 +36,8 @@ import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.domain.model.PagerModel
 import com.example.taskaroo.presentation.nav_component.Screens
+import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
+import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
@@ -44,25 +46,24 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
-fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreManager = get()) {
+fun OnBoardingScreen(navController: NavController, viewModel: PrefsViewModel) {
 
-    val coroutineScope = rememberCoroutineScope()
 
     val picturesList = listOf(
         PagerModel(
             image = R.drawable.onboarding_1,
-            quote = "My Tasks used to be scattered all around. Now\n they`re in one place!",
-            author = "Peter Parker."
+            quote = stringResource(R.string.onboarding_qoute1),
+            author = stringResource(R.string.onboarding_qoute1_author)
         ),
         PagerModel(
             image = R.drawable.onboarding_2,
-            quote = "Focus on being productive instead of \nbusy",
-            author = "– Tim Ferriss"
+            quote = stringResource(R.string.onboarding_qoute2),
+            author = stringResource(R.string.onboarding_qoute2_author)
         ),
         PagerModel(
             image = R.drawable.onboarding_3,
-            quote = "What gets measured gets \nmanaged.",
-            author = "– Peter Drucker"
+            quote = stringResource(R.string.onboarding_qoute3),
+            author = stringResource(R.string.onboarding_qoute3_author)
         )
     )
 
@@ -125,9 +126,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
 
 
         ElevatedButton(onClick = {
-            coroutineScope.launch(IO) {
-                dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
-            }
+            viewModel.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
             navController.navigate(Screens.USER_PROFILE.name)
         },
             colors = ButtonDefaults.buttonColors(containerColor = red)

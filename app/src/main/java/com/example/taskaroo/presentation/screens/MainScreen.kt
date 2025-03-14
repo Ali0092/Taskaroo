@@ -1,12 +1,12 @@
 package com.example.taskaroo.presentation.screens
 
 import android.util.Log
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,36 +28,37 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.taskaroo.R
@@ -68,6 +69,7 @@ import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
+import com.example.taskaroo.presentation.viewstates.TasksViewState
 import com.example.taskaroo.presentation.viewstates.UserViewState
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
@@ -84,25 +86,13 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    navController: NavController, userViewModel: UserViewModel, taskViewModel: TaskViewModel = get()
+    navController: NavController, userViewModel: UserViewModel = get(), taskViewModel: TaskViewModel = get()
 ) {
     val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {
-        FloatingActionButton(
-            modifier = Modifier.padding(bottom = 24.sdp, end = 12.sdp), onClick = {
-                taskViewModel.setTaskToBeAdded(Task())
-                taskViewModel.setSelectedTask(Task())
-                navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
-            }, containerColor = red
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Add, contentDescription = null, tint = Color.White
-            )
-        }
-    }, content = { innerPadding ->
-
+    Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {},
+        content = { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,27 +100,9 @@ fun MainScreen(
                 .background(backgroundColor)
         ) {
             stickyHeader {
-                TopBar(getUserData.value)
+                TopBar(navController,getUserData.value)
             }
-            item {
-//                    SearchBar()
-            }
-            //do this in the end
-//                item{
-//                    SectionCategories()
-//                    Spacer(Modifier.height(24.sdp))
-//                }
-            item {
-//                Text(
-//                    text = "Tasks",
-//                    color = textColor,
-//                    fontSize = 18.textSdp,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier.padding(start = 24.sdp)
-//                )
-//                Spacer(modifier = Modifier.height(8.sdp))
-            }
-            if (taskList.value.tasks == null) {
+            if (taskList.value.tasks?.isNullOrEmpty() == true) {
                 item {
                     Column(
                         modifier = Modifier
@@ -139,395 +111,288 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
+
+                        Image(
+                            painter = painterResource(R.drawable.blank_list),
+                            contentDescription = null,
+                            modifier = Modifier.padding(horizontal = 50.sdp),
+                        )
                         Text(
-                            text = "No tasks available",
+                            text = stringResource(R.string.labelEmptyScreen),
                             color = textColor,
-                            fontSize = 14.textSdp,
-                            fontWeight = FontWeight.SemiBold
+                            fontSize = 14.textSdp
                         )
                     }
                 }
             } else {
                 taskList.value.tasks?.let { list ->
                     items(list.size) { index ->
-                        ItemTaskSection(list[index], getClicked = { data ->
-                            taskViewModel.setSelectedTask(data)
-                            navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
-                        }, getSwipe = { task ->
-
-                        })
+                        ItemTaskSection(
+                            data = list[index],
+                            getClicked = { data ->
+                                taskViewModel.setSelectedTask(data)
+                                navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
+                             },
+                            removeTheTask = { task->
+                                taskViewModel.deleteTask(task)
+                            }
+                        )
                     }
-
                 }
-
             }
-
         }
-
     })
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTaskSection(
-    data: Task, getClicked: (Task) -> Unit, getSwipe: (Task) -> Unit
+    data: Task, getClicked: (Task) -> Unit, removeTheTask: (Task) -> Unit
 ) {
-
-    lateinit var icon: ImageVector
-    lateinit var alignment: Alignment
-    var color: Color = Color.Transparent
-
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-//    val swipeState = rememberSwipeToDismissBoxState()
-//
-//    when (swipeState.dismissDirection) {
-//        SwipeToDismissBoxValue.EndToStart -> {
-//            icon = Icons.Outlined.Delete
-//            alignment = Alignment.CenterEnd
-//            color = MaterialTheme.colorScheme.errorContainer
-//        }
-//
-//        SwipeToDismissBoxValue.StartToEnd -> {
-////            icon = Icons.Outlined.Edit
-////            alignment = Alignment.CenterStart
-////            color =
-////                Color.Green.copy(alpha = 0.3f) // You can generate theme for successContainer in themeBuilder
-//        }
-//
-//        SwipeToDismissBoxValue.Settled -> {
-//            icon = Icons.Outlined.Delete
-//            alignment = Alignment.CenterEnd
-//            color = MaterialTheme.colorScheme.errorContainer
-//
-//        }
-//    }
-//    SwipeToDismissBox(
-//        modifier = Modifier.animateContentSize(), state = swipeState, backgroundContent = {
-//            Box(
-//                contentAlignment = alignment,
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(color)
-//            ) {
-//                Icon(
-//                    modifier = Modifier.minimumInteractiveComponentSize(),
-//                    imageVector = icon,
-//                    contentDescription = null
-//                )
-//            }
-//        }) {
-        Card(
-            modifier = Modifier
-                .background(Color.Transparent)
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
-                .clickable {
-                    getClicked(data)
-                },
-            shape = RoundedCornerShape(20.sdp),
-            colors = CardDefaults.cardColors(containerColor = cardColor),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        ) {
+    var showRemoveDialogState by remember { mutableStateOf(false) }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.sdp)
-            ) {
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = data.title,
-                        color = textColor,
-                        fontSize = 17.textSdp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        softWrap = true
-                    )
-
-                    Spacer(modifier = Modifier.width(10.sdp))
-
-                    Card(
-                        modifier = Modifier.wrapContentSize(),
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(containerColor = if (data.priority == "Low") blue else if (data.priority == "Medium") orange else darKRed),
-                        border = BorderStroke(width = 0.4.dp, color = textColor)
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
-                            text = data.priority,
-                            color = textColor,
-                            fontSize = 12.textSdp
-                        )
-                    }
-
-                }
-
-                Spacer(modifier = Modifier.height(8.sdp))
-
-                Text(
-                    text = data.description,
-                    color = textColor,
-                    fontSize = 12.textSdp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    modifier = Modifier.alpha(0.7f)
-                )
-
-                Spacer(modifier = Modifier.height(8.sdp))
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-
-                    Icon(
-                        painter = painterResource(R.drawable.icon_category),
-                        contentDescription = null,
-                        tint = green,
-                        modifier = Modifier.size(20.sdp)
-                    )
-
-                    Spacer(modifier = Modifier.width(5.sdp))
-
-                    Text(
-                        text = data.category,
-                        color = textColor,
-                        fontSize = 12.textSdp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 3,
-                    )
-
-                    Spacer(modifier = Modifier.width(12.sdp))
-
-                    Icon(
-                        imageVector = Icons.Rounded.Notifications,
-                        contentDescription = null,
-                        tint = red,
-                        modifier = Modifier.size(20.sdp)
-                    )
-
-                    Spacer(modifier = Modifier.width(5.sdp))
-
-                    Text(
-                        text = dateFormater.format(data.startDate) + " - " + dateFormater.format(
-                            data.dueDate
-                        ),
-                        color = textColor,
-                        fontSize = 12.textSdp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 3,
-                    )
-                }
-            }
+    RemoveTaskDialog(
+        showDialog = showRemoveDialogState,
+        onDismiss = {
+            showRemoveDialogState = false
+        },
+        removeTheTask = {
+            removeTheTask(data)
         }
-//    }
-//
-//    when (swipeState.currentValue) {
-//        SwipeToDismissBoxValue.EndToStart -> {
-////            onDelete()
-//        }
-//
-//        SwipeToDismissBoxValue.StartToEnd -> {
-//            LaunchedEffect(swipeState) {
-////                onEdit()
-//                swipeState.snapTo(SwipeToDismissBoxValue.Settled)
-//            }
-//        }
-//
-//        SwipeToDismissBoxValue.Settled -> {
-//        }
-//    }
-
-}
-
-@Composable
-fun SectionCategories() {
-
-    val categoriesList = listOf(
-        CategoryModel(title = "Mobile App", totalTasks = 10, icon = R.drawable.cat_android),
-        CategoryModel(title = "Web App", totalTasks = 10, icon = R.drawable.cat_web),
-        CategoryModel(title = "Personal ", totalTasks = 10, icon = R.drawable.cat_personal),
-        CategoryModel(title = "Travel", totalTasks = 10, icon = R.drawable.cat_travel),
-        CategoryModel(title = "Professional", totalTasks = 10, icon = R.drawable.cat_work),
-        CategoryModel(title = "Art", totalTasks = 10, icon = R.drawable.car_art),
     )
 
-    Column(
+    Card(
         modifier = Modifier
+            .background(Color.Transparent)
             .fillMaxWidth()
-            .padding(horizontal = 24.sdp)
+            .wrapContentHeight()
+            .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
+            .combinedClickable(true, onClick = {
+                getClicked(data)
+            }, onLongClick = {
+                showRemoveDialogState = !showRemoveDialogState
+            }),
+        shape = RoundedCornerShape(20.sdp),
+        colors = CardDefaults.cardColors(containerColor = cardColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
-        Text(
-            text = "Categories",
-            color = textColor,
-            fontSize = 18.textSdp,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(modifier = Modifier.height(16.sdp))
 
-        LazyRow {
-            items(categoriesList) { category ->
-                ItemCategoriesSection(
-                    title = category.title, totalTasks = category.totalTasks, icon = category.icon
-                )
-            }
-        }
-
-    }
-
-}
-
-@Composable
-fun ItemCategoriesSection(title: String, totalTasks: Int, icon: Int) {
-
-    Box(
-        modifier = Modifier
-            .width(150.sdp)
-            .height(160.sdp)
-            .padding(end = 16.sdp)
-            .clip(RoundedCornerShape(20.sdp))
-            .background(cardColor)
-    ) {
         Column(
-            modifier = Modifier.padding(start = 16.sdp, top = 16.sdp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.sdp)
         ) {
 
-            Text(
-                text = title,
-                color = textColor,
-                fontSize = 17.textSdp,
-                fontWeight = FontWeight.SemiBold,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = data.title,
+                    color = textColor,
+                    fontSize = 17.textSdp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = true
+                )
+
+                Spacer(modifier = Modifier.width(10.sdp))
+
+                Card(
+                    modifier = Modifier.wrapContentSize(),
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(containerColor = if (data.priority == "Low") blue else if (data.priority == "Medium") orange else darKRed),
+                    border = BorderStroke(width = 0.4.dp, color = textColor)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
+                        text = data.priority,
+                        color = textColor,
+                        fontSize = 12.textSdp
+                    )
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(8.sdp))
 
             Text(
-                text = "${totalTasks} Pending Tasks",
-                modifier = Modifier
-                    .padding(top = 1.sdp)
-                    .alpha(0.7f),
+                text = data.description,
                 color = textColor,
-                fontSize = 13.textSdp,
-                fontWeight = FontWeight.Normal,
+                fontSize = 12.textSdp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                modifier = Modifier.alpha(0.7f)
             )
 
             Spacer(modifier = Modifier.height(8.sdp))
 
-        }
+            Row(modifier = Modifier.fillMaxWidth()) {
 
-        Image(
-            painter = painterResource(icon),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(100.sdp)
-                .offset(x = 1.sdp, y = 5.sdp)
-                .align(Alignment.BottomEnd)
-        )
+                Icon(
+                    painter = painterResource(R.drawable.icon_category),
+                    contentDescription = null,
+                    tint = green,
+                    modifier = Modifier.size(20.sdp)
+                )
 
-    }
-}
+                Spacer(modifier = Modifier.width(5.sdp))
 
-@Composable
-fun SearchBar() {
+                Text(
+                    text = data.category,
+                    color = textColor,
+                    fontSize = 12.textSdp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 3,
+                )
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.sdp, horizontal = 24.sdp)
-            .background(Color.Transparent)
-            .clickable {},
-        shape = CircleShape,
-        colors = CardDefaults.cardColors(containerColor = cardColor),
-    ) {
-        Row(
-            modifier = Modifier.padding(vertical = 12.sdp, horizontal = 24.sdp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+                Spacer(modifier = Modifier.width(12.sdp))
 
-            ) {
-            Image(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(25.sdp)
-                    .alpha(0.6f),
-                colorFilter = ColorFilter.tint(textColor)
-            )
+                Icon(
+                    imageVector = Icons.Rounded.Notifications,
+                    contentDescription = null,
+                    tint = red,
+                    modifier = Modifier.size(20.sdp)
+                )
 
-            Text(
-                text = "search ",
-                modifier = Modifier
-                    .padding(start = 3.sdp)
-                    .alpha(0.6f),
-                color = textColor,
-                fontSize = 16.textSdp,
-                fontWeight = FontWeight.Normal,
-            )
+                Spacer(modifier = Modifier.width(5.sdp))
+
+                Text(
+                    text = dateFormater.format(data.startDate) + " - " + dateFormater.format(
+                        data.dueDate
+                    ),
+                    color = textColor,
+                    fontSize = 12.textSdp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 3,
+                )
+            }
         }
     }
 
 }
 
 @Composable
-fun TopBar(data: UserViewState) {
+fun TopBar(
+    navController: NavController,
+    data: UserViewState,
+    viewModel: TaskViewModel = get()
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth()
             .background(backgroundColor)
-            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp)
+            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = data.user?.name.toString(),
+                text = data.user?.firstName.toString(),
                 color = textColor,
                 fontSize = 21.textSdp,
                 fontWeight = FontWeight.SemiBold,
             )
 
             Text(
-                text = "Plan it, track it, crush it!",
+                text = stringResource(R.string.labelMotivation),
                 modifier = Modifier.padding(top = 3.sdp),
                 color = red,
-                fontSize = 14.textSdp,
+                fontSize = 16.textSdp,
                 fontWeight = FontWeight.Normal,
             )
         }
 
+        Icon(
+            modifier = Modifier
+                .size(28.sdp)
+                .clickable {
+                    viewModel.setTaskToBeAdded(Task())
+                    viewModel.setSelectedTask(Task())
+                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
+                },
+            painter = painterResource(R.drawable.add), contentDescription = null, tint = textColor
+        )
+    }
+}
 
-        Card(
-            modifier = Modifier.size(45.sdp),
-            shape = CircleShape,
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-            border = BorderStroke(width = 0.4.dp, color = textColor)
-        ) {
-            if (data.user != null) {
-                Log.d("getUserDataLogsd", "TopBar: ${data.user.image}")
-//                AsyncImage(
-//                    model = data.user.image.toString(),
-//                    contentDescription = null,
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier.fillMaxSize()
-//                )
-                Image(
-                    painter = painterResource(R.drawable.onboarding_1),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.onboarding_1),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+@Composable
+fun RemoveTaskDialog(
+    showDialog: Boolean, onDismiss: () -> Unit, removeTheTask: () -> Unit
+) {
+    if (showDialog) {
+        Dialog(onDismissRequest = {
+            onDismiss()
+        }) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(cardColor, shape = RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier.padding(vertical = 16.sdp, horizontal = 16.sdp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(R.string.removeTaskTitle),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textColor
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = stringResource(R.string.removeTaskSubTitle),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = textColor
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            modifier = Modifier.clickable {
+                                onDismiss()
+                            },
+                            text = stringResource(R.string.buttonCancel),
+                            fontSize = 14.textSdp,
+                            color = textColor,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Button(
+                            onClick = {
+                                removeTheTask()
+                                onDismiss()
+                            },
+                            modifier = Modifier.padding(start = 14.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = red)
+                        ) {
+                            Text(
+                               text = stringResource(R.string.buttonRemove),
+                                color = textColor,
+                                fontSize = 16.textSdp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
             }
-
         }
     }
 }

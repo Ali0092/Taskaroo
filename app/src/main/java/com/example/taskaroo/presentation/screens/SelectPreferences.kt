@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.taskaroo.R
@@ -50,15 +51,15 @@ fun SelectPreferences(userViewModel: UserViewModel = get()) {
     var selectedPreferences = remember { mutableStateListOf("") }
 
     val prefsList = listOf(
-        PrefsModel(R.drawable.user,"Personal"),
-        PrefsModel(R.drawable.working,"Work"),
-        PrefsModel(R.drawable.education,"Education")
+        PrefsModel(R.drawable.user, stringResource(R.string.preference_personal)),
+        PrefsModel(R.drawable.working,stringResource(R.string.preference_work)),
+        PrefsModel(R.drawable.education,stringResource(R.string.preference_education))
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.padding(top = 24.sdp),
-            text = "How do you plan to user Taskaroo?",
+            text = stringResource(R.string.preference_ScreenTitle),
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
             color = textColor
@@ -66,7 +67,7 @@ fun SelectPreferences(userViewModel: UserViewModel = get()) {
 
         Spacer(modifier = Modifier.height(4.sdp))
 
-        Text(text = "Choose that apply.",
+        Text(text = stringResource(R.string.preference_ScreenSubTitle),
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
             color = textColor

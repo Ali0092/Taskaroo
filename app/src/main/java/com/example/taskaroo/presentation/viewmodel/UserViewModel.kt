@@ -1,10 +1,15 @@
 package com.example.taskaroo.presentation.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.taskaroo.common.ViewState
+import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.User
+import com.example.taskaroo.domain.usercases.prefs.GetBooleanUseCase
+import com.example.taskaroo.domain.usercases.prefs.SaveBooleanUseCase
 import com.example.taskaroo.domain.usercases.user.CreateUserUserCase
 import com.example.taskaroo.domain.usercases.user.GetUserUserCase
 import com.example.taskaroo.domain.usercases.user.UpdateUserUserCase
@@ -31,6 +36,7 @@ class UserViewModel(
         _user.value = User()
         getUserData()
     }
+
 
     fun setUser(user: User) {
         _user.value = user
