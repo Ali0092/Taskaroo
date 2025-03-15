@@ -2,17 +2,13 @@ package com.example.taskaroo.koin
 
 import androidx.room.Room
 import com.example.taskaroo.data.datastore.DataStoreManager
-import com.example.taskaroo.data.repositoryImp.PrefsRepositoryImpl
 import com.example.taskaroo.data.repositoryImp.TaskRepositoryImp
 import com.example.taskaroo.data.repositoryImp.UserRepositoryImp
 import com.example.taskaroo.data.room.TaskDao
 import com.example.taskaroo.data.room.TaskarooDatabase
 import com.example.taskaroo.data.room.UserDao
-import com.example.taskaroo.domain.repository.PrefsRepository
 import com.example.taskaroo.domain.repository.TaskRepository
 import com.example.taskaroo.domain.repository.UserRepository
-import com.example.taskaroo.domain.usercases.prefs.GetBooleanUseCase
-import com.example.taskaroo.domain.usercases.prefs.SaveBooleanUseCase
 import com.example.taskaroo.domain.usercases.task.CreateTaskUseCase
 import com.example.taskaroo.domain.usercases.task.DeleteTaskUseCase
 import com.example.taskaroo.domain.usercases.task.GetTasksListUseCase
@@ -42,7 +38,6 @@ val appModule = module {
     //repos
     factory<UserRepository> { UserRepositoryImp(get<UserDao>()) }
     factory<TaskRepository> { TaskRepositoryImp(get<TaskDao>()) }
-    factory<PrefsRepository> { PrefsRepositoryImpl(get<DataStoreManager>()) }
 
     //UseCases (User)
     factory { CreateUserUserCase(get<UserRepository>()) }
@@ -55,14 +50,11 @@ val appModule = module {
     factory { DeleteTaskUseCase(get<TaskRepository>()) }
     factory { GetTasksListUseCase(get<TaskRepository>()) }
 
-    //UseCases (Prefs)
-    factory { SaveBooleanUseCase(get()) }
-    factory { GetBooleanUseCase(get()) }
 
 }
 
 val viewModelModules = module {
-    viewModel { PrefsViewModel(get(), get()) }
+    viewModel { PrefsViewModel() }
     single { UserViewModel(get(), get(), get()) }
     single { TaskViewModel(get(), get(), get(), get()) }
 

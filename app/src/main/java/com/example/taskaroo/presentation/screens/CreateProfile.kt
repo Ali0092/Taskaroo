@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.data.datastore.DataStoreManager
@@ -35,11 +36,12 @@ import org.koin.androidx.compose.get
 
 @Composable
 fun CreateProfile(
-    navController: NavController, viewModel: PrefsViewModel, userViewModel: UserViewModel = get()) {
+    navController: NavController, userViewModel: UserViewModel = get(), dataStoreManager: DataStoreManager = get()) {
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val animationScope = rememberCoroutineScope()
     var buttonText = remember { mutableStateOf("Continue") }
+    var coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
     Column(
@@ -76,7 +78,9 @@ fun CreateProfile(
                                 userViewModel.setUser(userViewModel.user.value.copy(id = System.currentTimeMillis()))
                                 userViewModel.createUserData()
                                 //2.Update in dataStore
-                                viewModel.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
+                                coroutineScope.launch {
+                                    dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
+                                }
                                 //3.navigate to next
                                 navController.navigate(Screens.MAIN.name)
                             }

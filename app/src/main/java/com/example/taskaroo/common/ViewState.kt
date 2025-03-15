@@ -1,6 +1,5 @@
 package com.example.taskaroo.common
 
-import com.example.taskaroo.domain.model.User
 
 sealed class ViewState<T>(val message: String? = null, val data: T? = null) {
 

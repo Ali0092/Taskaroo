@@ -15,9 +15,11 @@ class GetTasksListUseCase(
         try {
             emit(ViewState.Loading())
             taskRepository.getTasks().collect { it->
-                val responseModel =
-                    if (it.isEmpty()) listOf<Task>() else it.map { it.toTask() }
-                emit(ViewState.Success(responseModel))
+                if (it.isEmpty()){
+                    emit(ViewState.Error(message = "No Data"))
+                }else {
+                    emit(ViewState.Success(it.map { it.toTask() }))
+                }
             }
         } catch (e: Exception) {
             emit(ViewState.Error(message = e.message.toString()))

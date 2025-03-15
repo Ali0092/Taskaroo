@@ -1,85 +1,78 @@
 package com.example.taskaroo.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.presentation.nav_component.AppsNavHost
 import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         val viewModel: PrefsViewModel = getViewModel()
 
         installSplashScreen().setKeepOnScreenCondition {
-
-            viewModel.isOnBoardingDone.value != null
-//                    || viewModel.isUserProfileCreated.value != null
+            viewModel.isSplashLoading.value
         }
 
         setContent {
             TaskarooTheme {
+                val dataStore: DataStoreManager = get()
                 val systemUiController = rememberSystemUiController()
+                val navController = rememberNavController()
                 systemUiController.setSystemBarsColor(
                     color = backgroundColor
                 )
-//                val isOnBoardingDone by viewModel.isOnBoardingDone.collectAsState()
-//                val isUserProfileCreated by viewModel.isUserProfileCreated.collectAsState()
-//
-//                var startDestination by remember { mutableStateOf<String?>(null) }
-//
-//                LaunchedEffect(isOnBoardingDone.value) {
-//                    if (isOnBoardingDone.value!=null) {
-//                        startDestination = if (isOnBoardingDone.value==true) { //checks if onboarding is done or not
-//                            if (isUserProfileCreated.value==true) { //checks if user profile is created or not
-//                                Screens.MAIN.name
-//                            }else Screens.USER_PROFILE.name
-//                        }  else Screens.ONBOARDING.name
-//                    }
-//                }
-//
-//                if (startDestination!=null) {
-//                    AppsNavHost(navController = rememberNavController(),
-//                        startDestination = startDestination!!)
-//                }
-//
 
-//                val startDestination by remember(isOnBoardingDone.value, isUserProfileCreated.value) {
-//                    mutableStateOf(
-//                        when {
-//                            isOnBoardingDone.value == true && isUserProfileCreated.value == true -> Screens.MAIN.name
-//                            isOnBoardingDone.value == true -> Screens.USER_PROFILE.name
-//                            else -> Screens.ONBOARDING.name
-//                        }
-//                    )
-//                }
+                val isOnBoardingDone =
+                    dataStore.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY)
+                        .collectAsState(initial = null) // Change initial value to null
 
-                val isOnBoardingDone by viewModel.isOnBoardingDone.collectAsState()
-                val isUserProfileCreated by viewModel.isUserProfileCreated.collectAsState()
+                val isUserProfileCreated =
+                    dataStore.getBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY)
+                        .collectAsState(initial = null)
 
-                val startDestination =
-                    if (isOnBoardingDone != null) { //checks if onboarding is done or not
-                        if (isUserProfileCreated != null) { //checks if user profile is created or not
-                            Screens.MAIN.name
-                        } else Screens.USER_PROFILE.name
-                    } else Screens.ONBOARDING.name
+                val startDestination = remember { mutableStateOf<String?>(null) }
 
-                AppsNavHost(
-                    navController = rememberNavController(),
-                    startDestination = startDestination
-                )
+                LaunchedEffect(isOnBoardingDone.value, isUserProfileCreated.value) {
+                    if (isOnBoardingDone.value != null && isUserProfileCreated.value != null) {
+                        startDestination.value = when {
+                            isOnBoardingDone.value == true && isUserProfileCreated.value == true -> Screens.MAIN.name
+                            isOnBoardingDone.value == true -> Screens.USER_PROFILE.name
+                            else -> Screens.ONBOARDING.name
+                        }
+
+                        // Hide splash only when decision is made
+                        viewModel.setSplashLoadingStateFalse()
+                    }
+                }
+
+                if (startDestination.value == null) {
+                    viewModel.setSplashLoadingStateTrue()
+                } else {
+                    AppsNavHost(
+                        navController = navController, startDestination = startDestination.value!!
+                    )
+                }
 
             }
         }

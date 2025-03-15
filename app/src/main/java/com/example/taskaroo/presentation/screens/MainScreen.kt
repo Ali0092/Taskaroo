@@ -1,6 +1,12 @@
 package com.example.taskaroo.presentation.screens
 
 import android.util.Log
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -15,7 +21,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,19 +28,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,10 +48,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,12 +64,10 @@ import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
-import com.example.taskaroo.domain.model.CategoryModel
 import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
-import com.example.taskaroo.presentation.viewstates.TasksViewState
 import com.example.taskaroo.presentation.viewstates.UserViewState
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
@@ -91,7 +89,9 @@ fun MainScreen(
     val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = {}, bottomBar = {}, floatingActionButton = {},
+    Scaffold(topBar = {
+        TopBar(navController,getUserData.value)
+    }, bottomBar = {}, floatingActionButton = {},
         content = { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -99,44 +99,50 @@ fun MainScreen(
                 .padding(innerPadding)
                 .background(backgroundColor)
         ) {
-            stickyHeader {
-                TopBar(navController,getUserData.value)
-            }
-            if (taskList.value.tasks?.isNullOrEmpty() == true) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .height(600.sdp)
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Image(
-                            painter = painterResource(R.drawable.blank_list),
-                            contentDescription = null,
-                            modifier = Modifier.padding(horizontal = 50.sdp),
-                        )
-                        Text(
-                            text = stringResource(R.string.labelEmptyScreen),
-                            color = textColor,
-                            fontSize = 14.textSdp
-                        )
-                    }
+            //its loading
+            if (taskList.value.isLoading) {
+                items(10) {
+                    ShimmerCard()
                 }
-            } else {
-                taskList.value.tasks?.let { list ->
-                    items(list.size) { index ->
-                        ItemTaskSection(
-                            data = list[index],
-                            getClicked = { data ->
-                                taskViewModel.setSelectedTask(data)
-                                navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
-                             },
-                            removeTheTask = { task->
-                                taskViewModel.deleteTask(task)
-                            }
-                        )
+            }else {
+
+                if (taskList.value.error!= null) { //its error
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .height(600.sdp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+
+                            Image(
+                                painter = painterResource(R.drawable.blank_list),
+                                contentDescription = null,
+                                modifier = Modifier.padding(horizontal = 50.sdp),
+                            )
+                            Text(
+                                text = stringResource(R.string.labelEmptyScreen),
+                                color = textColor,
+                                fontSize = 14.textSdp
+                            )
+                        }
+                    }
+
+                } else { //its data
+                    taskList.value.tasks?.let { list ->
+                        items(list.size) { index ->
+                            ItemTaskSection(
+                                data = list[index],
+                                getClicked = { data ->
+                                    taskViewModel.setSelectedTask(data)
+                                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
+                                },
+                                removeTheTask = { task->
+                                    taskViewModel.deleteTask(task)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -223,10 +229,10 @@ fun ItemTaskSection(
             Text(
                 text = data.description,
                 color = textColor,
-                fontSize = 12.textSdp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 13.textSdp,
+                fontWeight = FontWeight.Normal,
                 maxLines = 2,
-                modifier = Modifier.alpha(0.7f)
+                modifier = Modifier.alpha(0.9f)
             )
 
             Spacer(modifier = Modifier.height(8.sdp))
@@ -287,12 +293,12 @@ fun TopBar(
             .fillMaxWidth()
             .wrapContentWidth()
             .background(backgroundColor)
-            .padding(top = 24.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp),
+            .padding(top = 44.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = data.user?.firstName.toString(),
+                text = if (data.isLoading) "Loading...." else data.user?.firstName.toString(),
                 color = textColor,
                 fontSize = 21.textSdp,
                 fontWeight = FontWeight.SemiBold,
@@ -395,4 +401,49 @@ fun RemoveTaskDialog(
             }
         }
     }
+}
+
+@Composable
+fun ShimmerCard() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .padding(8.dp)
+            .shimmerEffect(),  // Apply shimmer
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {}
+}
+
+@Composable
+fun Modifier.shimmerEffect(): Modifier {
+    val transition = rememberInfiniteTransition()
+    val shimmerColor = listOf(
+        Color.LightGray.copy(alpha = 0.6f),
+        Color.LightGray.copy(alpha = 0.3f),
+        Color.LightGray.copy(alpha = 0.6f)
+    )
+
+    val translateX by transition.animateFloat(
+        initialValue = -1000f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    return this
+        .graphicsLayer {
+            clip = true
+            alpha = 0.8f
+        }
+        .background(
+            brush = Brush.linearGradient(
+                colors = shimmerColor,
+                start = Offset(translateX, 0f),
+                end = Offset(translateX + 500f, 0f)
+            )
+        )
 }

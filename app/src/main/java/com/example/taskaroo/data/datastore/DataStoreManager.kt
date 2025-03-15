@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class DataStoreManager(var context: Context) {
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "taskaroo_preferences1")
+
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "taskaroo_preferences")
 
     companion object {
         val ON_BOARDING_DONE_KEY = booleanPreferencesKey("onboarding_done")
@@ -25,7 +26,7 @@ class DataStoreManager(var context: Context) {
 
     fun getBooleanPrefs(key: Preferences.Key<Boolean>): Flow<Boolean> {
         return context.dataStore.data.map { preferences ->
-            preferences[key] == true
+            preferences[key] ?: false
         }
     }
 }

@@ -46,8 +46,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
-fun OnBoardingScreen(navController: NavController, viewModel: PrefsViewModel) {
+fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreManager = get()) {
 
+    val coroutineScope = rememberCoroutineScope()
 
     val picturesList = listOf(
         PagerModel(
@@ -108,7 +109,7 @@ fun OnBoardingScreen(navController: NavController, viewModel: PrefsViewModel) {
         Text(
             text = stringResource(R.string.onboarding_subtitle),
             color = textColor,
-            fontSize = 24.textSdp,
+            fontSize = 18.textSdp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             maxLines = 2,
@@ -126,7 +127,9 @@ fun OnBoardingScreen(navController: NavController, viewModel: PrefsViewModel) {
 
 
         ElevatedButton(onClick = {
-            viewModel.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
+            coroutineScope.launch {
+                dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
+            }
             navController.navigate(Screens.USER_PROFILE.name)
         },
             colors = ButtonDefaults.buttonColors(containerColor = red)

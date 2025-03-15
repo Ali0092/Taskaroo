@@ -14,7 +14,7 @@ import com.example.taskaroo.presentation.screens.OnBoardingScreen
 import org.koin.androidx.compose.koinViewModel
 
 enum class Screens {
-    ONBOARDING, USER_PROFILE, MAIN, HOME, SEARCH, PROFILE, ADD_TASK,
+    ONBOARDING, USER_PROFILE, MAIN, SPLASH, ADD_TASK,
 }
 
 sealed class SimpleScreenNavigationItem(val route: String) {
@@ -35,16 +35,17 @@ fun AppsNavHost(
     ) {
 
         composable(SimpleScreenNavigationItem.OnBoarding.route) {
-            OnBoardingScreen(navController = navController, viewModel = koinViewModel())
+            OnBoardingScreen(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.UserProfile.route) {
-            CreateProfile(navController = navController,koinViewModel())
+            CreateProfile(navController = navController)
         }
 
         composable(SimpleScreenNavigationItem.Main.route) {
             MainScreen(navController)
         }
+
 
         composable(
             route = "${SimpleScreenNavigationItem.AddTask.route}/{flag}",
