@@ -34,9 +34,9 @@ TaskKaroo is a modern task management application built using Jetpack Compose, f
 📸 Screenshots
 ---
 <div style="display: flex; gap: 50px;">
-  <img src="https://github.com/user-attachments/assets/6e088afe-d2e5-47e7-ae82-5e7d82628c8a" alt="Screen1" width="300"/>
-  <img src="https://github.com/user-attachments/assets/48c2a722-a9a0-4fd0-b764-255959d7e73d" alt="Screen2" width="300"/>
- <img src="https://github.com/user-attachments/assets/81bbcd13-4096-48f1-bbea-53d36fdc5af8" alt="Screen4" width="300"/>
+  <img src="https://github.com/user-attachments/assets/6e088afe-d2e5-47e7-ae82-5e7d82628c8a" alt="Screen1" width="250"/>
+  <img src="https://github.com/user-attachments/assets/48c2a722-a9a0-4fd0-b764-255959d7e73d" alt="Screen2" width="250"/>
+ <img src="https://github.com/user-attachments/assets/81bbcd13-4096-48f1-bbea-53d36fdc5af8" alt="Screen4" width="250"/>
 </div>
 
 
