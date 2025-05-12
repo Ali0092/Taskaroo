@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,6 +39,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -69,12 +71,16 @@ import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationIte
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.presentation.viewstates.UserViewState
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.darKRed
 import com.example.taskaroo.ui.theme.green
+import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.orange
+import com.example.taskaroo.ui.theme.primaryColor
+import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
@@ -90,14 +96,20 @@ fun MainScreen(
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
     Scaffold(topBar = {
-        TopBar(navController,getUserData.value)
+        TopBar(getUserData.value) {
+            //adding task in database
+            taskViewModel.setTaskToBeAdded(Task())
+            taskViewModel.setSelectedTask(Task())
+            //routing to next screen
+            navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
+        }
     }, bottomBar = {}, floatingActionButton = {},
         content = { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(backgroundColor)
+                .background(background)
         ) {
             //its loading
             if (taskList.value.isLoading) {
@@ -116,15 +128,15 @@ fun MainScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
 
-                            Image(
-                                painter = painterResource(R.drawable.blank_list),
-                                contentDescription = null,
-                                modifier = Modifier.padding(horizontal = 50.sdp),
-                            )
+//                            Image(
+//                                painter = painterResource(R.drawable.blank_list),
+//                                contentDescription = null,
+//                                modifier = Modifier.padding(horizontal = 40.sdp),
+//                            )
                             Text(
                                 text = stringResource(R.string.labelEmptyScreen),
-                                color = textColor,
-                                fontSize = 14.textSdp
+                                color = primaryColor,
+                                fontSize = 16.textSdp
                             )
                         }
                     }
@@ -284,45 +296,48 @@ fun ItemTaskSection(
 
 @Composable
 fun TopBar(
-    navController: NavController,
     data: UserViewState,
-    viewModel: TaskViewModel = get()
+    getAddButtonClick:() -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth()
-            .background(backgroundColor)
-            .padding(top = 44.sdp, start = 24.sdp, end = 24.sdp, bottom = 16.sdp),
+            .background(background)
+            .padding(top = 44.sdp, start = 16.sdp, end = 16.sdp, bottom = 16.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (data.isLoading) "Loading...." else data.user?.firstName.toString(),
-                color = textColor,
-                fontSize = 21.textSdp,
+                text = if (data.isLoading) "Loading...." else "Hello, "+data.user?.firstName.toString()+"! ",
+                color = primaryColor,
+                fontSize = 24.textSdp,
                 fontWeight = FontWeight.SemiBold,
             )
-
+            Spacer(Modifier.height(3.sdp))
             Text(
                 text = stringResource(R.string.labelMotivation),
-                modifier = Modifier.padding(top = 3.sdp),
-                color = red,
-                fontSize = 16.textSdp,
+                color = primaryColorVariant,
+                fontSize = 14.textSdp,
                 fontWeight = FontWeight.Normal,
             )
         }
 
-        Icon(
+        Surface(
             modifier = Modifier
-                .size(28.sdp)
                 .clickable {
-                    viewModel.setTaskToBeAdded(Task())
-                    viewModel.setSelectedTask(Task())
-                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
+                    getAddButtonClick()
                 },
-            painter = painterResource(R.drawable.add), contentDescription = null, tint = textColor
-        )
+            color = onBackground,
+            shape = RoundedCornerShape(12.sdp),
+            shadowElevation = 1.sdp
+        ) {
+            Icon(
+                modifier = Modifier.padding(12.sdp).size(25.sdp),
+                imageVector = Icons.Rounded.Add, contentDescription = null, tint = primaryColor
+            )
+        }
+
     }
 }
 

@@ -16,6 +16,7 @@ import com.example.taskaroo.presentation.nav_component.AppsNavHost
 import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.ui.theme.TaskarooTheme
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.android.ext.android.get
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 val systemUiController = rememberSystemUiController()
                 val navController = rememberNavController()
                 systemUiController.setSystemBarsColor(
-                    color = backgroundColor
+                    color = background
                 )
 
                 val isOnBoardingDone = dataStore.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = null) // Change initial value to null
