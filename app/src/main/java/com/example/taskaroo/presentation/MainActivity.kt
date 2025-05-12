@@ -2,10 +2,10 @@ package com.example.taskaroo.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,17 +43,16 @@ class MainActivity : ComponentActivity() {
                     color = backgroundColor
                 )
 
-                val isOnBoardingDone =
-                    dataStore.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY)
-                        .collectAsState(initial = null) // Change initial value to null
+                val isOnBoardingDone = dataStore.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = null) // Change initial value to null
 
-                val isUserProfileCreated =
-                    dataStore.getBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY)
-                        .collectAsState(initial = null)
+                val isUserProfileCreated = dataStore.getBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY).collectAsState(initial = null)
 
                 val startDestination = remember { mutableStateOf<String?>(null) }
 
-                LaunchedEffect(isOnBoardingDone.value, isUserProfileCreated.value) {
+                Log.d("checkingSideEffectConcept", "onCreate: ${isOnBoardingDone.value} ${isUserProfileCreated}")
+                Log.d("checkingSideEffectConcept", "onCreate: ${isOnBoardingDone.value} ${isUserProfileCreated}")
+
+//                LaunchedEffect(isOnBoardingDone.value, isUserProfileCreated.value) {
                     if (isOnBoardingDone.value != null && isUserProfileCreated.value != null) {
                         startDestination.value = when {
                             isOnBoardingDone.value == true && isUserProfileCreated.value == true -> Screens.MAIN.name
@@ -64,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         // Hide splash only when decision is made
                         viewModel.setSplashLoadingStateFalse()
                     }
-                }
+//                }
 
                 if (startDestination.value == null) {
                     viewModel.setSplashLoadingStateTrue()

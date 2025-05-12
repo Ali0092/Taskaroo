@@ -11,7 +11,6 @@ import com.example.taskaroo.presentation.screens.AddTaskScreen
 import com.example.taskaroo.presentation.screens.CreateProfile
 import com.example.taskaroo.presentation.screens.MainScreen
 import com.example.taskaroo.presentation.screens.OnBoardingScreen
-import org.koin.androidx.compose.koinViewModel
 
 enum class Screens {
     ONBOARDING, USER_PROFILE, MAIN, SPLASH, ADD_TASK,

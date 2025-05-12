@@ -15,6 +15,7 @@ val Pink40 = Color(0xFF7D5260)
 val backgroundColor = Color(0xFF2E323D)
 val cardColor = Color(0xFF3e4553)
 
+//New theme colors
 
 val red = Color(0xfffb7160) // Used for highlights, branding, and key UI elements.
 val darKRed = Color(0xFFC22424) // Used for highlights, branding, and key UI elements.

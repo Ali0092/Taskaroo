@@ -33,15 +33,12 @@ import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.data.datastore.DataStoreManager
-import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.domain.model.PagerModel
+import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.nav_component.Screens
-import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
-import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
@@ -55,13 +52,11 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
             image = R.drawable.onboarding_1,
             quote = stringResource(R.string.onboarding_qoute1),
             author = stringResource(R.string.onboarding_qoute1_author)
-        ),
-        PagerModel(
+        ), PagerModel(
             image = R.drawable.onboarding_2,
             quote = stringResource(R.string.onboarding_qoute2),
             author = stringResource(R.string.onboarding_qoute2_author)
-        ),
-        PagerModel(
+        ), PagerModel(
             image = R.drawable.onboarding_3,
             quote = stringResource(R.string.onboarding_qoute3),
             author = stringResource(R.string.onboarding_qoute3_author)
@@ -126,13 +121,13 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
         Spacer(modifier = Modifier.weight(1f))
 
 
-        ElevatedButton(onClick = {
-            coroutineScope.launch {
-                dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY,true)
-            }
-            navController.navigate(Screens.USER_PROFILE.name)
-        },
-            colors = ButtonDefaults.buttonColors(containerColor = red)
+        ElevatedButton(
+            onClick = {
+                coroutineScope.launch {
+                    dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY, true)
+                }
+                navController.navigate(Screens.USER_PROFILE.name)
+            }, colors = ButtonDefaults.buttonColors(containerColor = red)
         ) {
             Text(
                 text = stringResource(R.string.buttonGetStarted),
