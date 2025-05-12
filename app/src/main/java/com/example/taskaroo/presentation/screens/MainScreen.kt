@@ -54,6 +54,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,7 @@ import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.Task
+import com.example.taskaroo.presentation.components.IconSurface
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
@@ -186,14 +188,14 @@ fun ItemTaskSection(
             .background(Color.Transparent)
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 8.sdp, start = 24.sdp, end = 24.sdp)
+            .padding(top = 8.sdp, start = 16.sdp, end = 16.sdp)
             .combinedClickable(true, onClick = {
                 getClicked(data)
             }, onLongClick = {
                 showRemoveDialogState = !showRemoveDialogState
             }),
         shape = RoundedCornerShape(20.sdp),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
+        colors = CardDefaults.cardColors(containerColor = onBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
 
@@ -206,11 +208,11 @@ fun ItemTaskSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
+                //title
                 Text(
                     modifier = Modifier.weight(1f),
                     text = data.title,
-                    color = textColor,
+                    color = primaryColor,
                     fontSize = 17.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -220,12 +222,13 @@ fun ItemTaskSection(
 
                 Spacer(modifier = Modifier.width(10.sdp))
 
+                //priority card
                 Card(
                     modifier = Modifier.wrapContentSize(),
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor = if (data.priority == "Low") blue else if (data.priority == "Medium") orange else darKRed),
-                    border = BorderStroke(width = 0.4.dp, color = textColor)
                 ) {
+                    //priority text
                     Text(
                         modifier = Modifier.padding(horizontal = 12.sdp, vertical = 2.sdp),
                         text = data.priority,
@@ -238,9 +241,10 @@ fun ItemTaskSection(
 
             Spacer(modifier = Modifier.height(8.sdp))
 
+            //description
             Text(
                 text = data.description,
-                color = textColor,
+                color = primaryColorVariant,
                 fontSize = 13.textSdp,
                 fontWeight = FontWeight.Normal,
                 maxLines = 2,
@@ -262,7 +266,7 @@ fun ItemTaskSection(
 
                 Text(
                     text = data.category,
-                    color = textColor,
+                    color = primaryColorVariant,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
@@ -283,7 +287,7 @@ fun ItemTaskSection(
                     text = dateFormater.format(data.startDate) + " - " + dateFormater.format(
                         data.dueDate
                     ),
-                    color = textColor,
+                    color = primaryColorVariant,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
@@ -323,23 +327,17 @@ fun TopBar(
             )
         }
 
-        Surface(
-            modifier = Modifier
-                .clickable {
-                    getAddButtonClick()
-                },
-            color = onBackground,
-            shape = RoundedCornerShape(12.sdp),
-            shadowElevation = 1.sdp
-        ) {
-            Icon(
-                modifier = Modifier.padding(12.sdp).size(25.sdp),
-                imageVector = Icons.Rounded.Add, contentDescription = null, tint = primaryColor
-            )
+        IconSurface(Icons.Rounded.Add) {
+            getAddButtonClick()
         }
 
     }
 }
+
+
+
+
+
 
 @Composable
 fun RemoveTaskDialog(
@@ -353,7 +351,7 @@ fun RemoveTaskDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(cardColor, shape = RoundedCornerShape(12.dp)),
+                    .background(background, shape = RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -365,7 +363,7 @@ fun RemoveTaskDialog(
                         text = stringResource(R.string.removeTaskTitle),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textColor
+                        color = primaryColorVariant
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -373,8 +371,7 @@ fun RemoveTaskDialog(
                     Text(
                         text = stringResource(R.string.removeTaskSubTitle),
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = textColor
+                        color = primaryColorVariant
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -392,17 +389,17 @@ fun RemoveTaskDialog(
                             },
                             text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
-                            color = textColor,
+                            color = primaryColor,
                             fontWeight = FontWeight.Bold
                         )
-
+                        Spacer(modifier = Modifier.width(8.dp))
                         Button(
                             onClick = {
                                 removeTheTask()
                                 onDismiss()
                             },
                             modifier = Modifier.padding(start = 14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = red)
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                         ) {
                             Text(
                                text = stringResource(R.string.buttonRemove),

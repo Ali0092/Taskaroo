@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -37,6 +39,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -52,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
@@ -64,19 +68,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.Task
+import com.example.taskaroo.presentation.components.IconSurface
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.green
+import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.orange
+import com.example.taskaroo.ui.theme.primaryColor
+import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
@@ -106,7 +116,7 @@ fun AddTaskScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(background)
     ) {
         Column(
             modifier = Modifier
@@ -118,59 +128,40 @@ fun AddTaskScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.sdp, end = 24.sdp),
+                    .padding(horizontal = 16.sdp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowLeft,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(25.sdp)
-                        .clickable {
-                            navController.popBackStack()
-                        },
-                    tint = textColor
-                )
+                IconSurface(icon = Icons.Rounded.KeyboardArrowLeft) {
+                    navController.popBackStack()
+                }
 
                 Text(
                     text = "Add Task",
                     fontSize = 16.textSdp,
-                    color = textColor,
+                    color = primaryColor,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f),
-                )
-
-                Icon(
-                    imageVector = Icons.Rounded.Check,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(25.sdp)
-                        .clickable {
-
-
-                        },
-                    tint = backgroundColor
+                    modifier = Modifier.weight(1f).padding(end = 25.sdp),
                 )
 
             }
 
-            Spacer(modifier = Modifier.height(24.sdp))
+            Spacer(modifier = Modifier.height(16.sdp))
 
             //time and priority
             Text(
                 text = "Pick Priority & Time",
                 fontSize = 18.textSdp,
-                color = textColor,
+                color = primaryColor,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
+                modifier = Modifier.padding(horizontal = 16.sdp)
             )
 
             Spacer(modifier = Modifier.height(16.sdp))
 
             //cat and priority
-            Row(modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)) {
+            Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_priority,
@@ -203,7 +194,7 @@ fun AddTaskScreen(
 
             }
             Spacer(modifier = Modifier.height(12.sdp))
-            Row(modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)) {
+            Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
                 ItemTimeAndPriority(
                     modifier = Modifier.weight(1f),
                     icon = R.drawable.icon_clock,
@@ -238,7 +229,7 @@ fun AddTaskScreen(
             Text(
                 text = "Task Details",
                 fontSize = 18.textSdp,
-                color = textColor,
+                color = primaryColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
             )
@@ -254,60 +245,59 @@ fun AddTaskScreen(
             })
         }
 
-        //now add button
-        ExtendedFloatingActionButton(
+        Box(
             modifier = Modifier
-                .padding(bottom = 24.sdp, end = 12.sdp)
-                .wrapContentSize()
-                .align(Alignment.BottomEnd),
-            onClick = {
-                if (taskViewModel.taskToBeAdded.value == Task()) {
-                    Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
-                    return@ExtendedFloatingActionButton
-                }
-                if (flag == 0) {
-                    taskViewModel.createTask()
-                } else {
-                    taskViewModel.updateTask()
-                }
-                navController.popBackStack()
-            }, containerColor = red
+                .padding(bottom = 32.sdp, start = 16.sdp, end = 16.sdp)
+                .fillMaxWidth().wrapContentHeight()
+                .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(50.sdp))
+                .background(primaryColor)
+                .clickable {
+                    if (taskViewModel.taskToBeAdded.value == Task()) {
+                        Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                        return@clickable
+                    }
+                    if (flag == 0) {
+                        taskViewModel.createTask()
+                    } else {
+                        taskViewModel.updateTask()
+                    }
+                    navController.popBackStack()
+                },
         ) {
-           Row(
-               verticalAlignment = Alignment.CenterVertically,
-               horizontalArrangement = Arrangement.Center
-           ) {
-               Text(
-                   text = stringResource(R.string.labelAddTask),
-                   fontSize = 16.textSdp,
-                   color = textColor,
-                   fontWeight = FontWeight.Bold,
-                   textAlign = TextAlign.Center,
-               )
-               Spacer(modifier = Modifier.width(8.sdp))
-               Icon(
-                   imageVector = Icons.Rounded.Check,
-                   contentDescription = null,
-                   modifier = Modifier
-                       .size(25.sdp)
-                       .clickable {
+            Text(
+                modifier = Modifier.padding(vertical = 18.sdp).align(Alignment.Center),
+                text = "Add a task",
+                fontSize = 16.textSdp,
+                color = textColor,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            )
+            Icon(
+                imageVector = Icons.Rounded.AddCircle,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(50.sdp)
+                    .offset(x = -5.sdp)
+                    .align(Alignment.CenterEnd)
+                    .clickable {
 
-                           if (taskViewModel.taskToBeAdded.value == Task()) {
-                               Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
-                               return@clickable
-                           }
+                        if (taskViewModel.taskToBeAdded.value == Task()) {
+                            Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                            return@clickable
+                        }
 
-                           if (flag == 0) {
-                               taskViewModel.createTask()
-                           } else {
-                               taskViewModel.updateTask()
-                           }
-                           navController.popBackStack()
-                       },
-                   tint = textColor
-               )
-           }
+                        if (flag == 0) {
+                            taskViewModel.createTask()
+                        } else {
+                            taskViewModel.updateTask()
+                        }
+                        navController.popBackStack()
+                    },
+                tint = textColor
+            )
         }
+
     }
 
 }
@@ -328,11 +318,13 @@ fun CustomTextField(placeHolderText: String, text: String, onValueChange: (Strin
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             errorContainerColor = Color.Transparent,
-            cursorColor = red,
+            cursorColor = primaryColor,
+            focusedTextColor = primaryColor,
+            unfocusedTextColor = primaryColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = red,
-            unfocusedLabelColor = textColor,
+            focusedLabelColor = primaryColor,
+            unfocusedLabelColor = primaryColorVariant,
         ),
         shape = RectangleShape,
         textStyle = TextStyle(fontSize = 20.textSdp),
@@ -393,7 +385,7 @@ fun ItemTimeAndPriority(
 
             },
         shape = RoundedCornerShape(20.sdp),
-        colors = CardDefaults.cardColors(containerColor = cardColor),
+        colors = CardDefaults.cardColors(containerColor = onBackground),
     ) {
         Row(
             modifier = Modifier
@@ -412,13 +404,13 @@ fun ItemTimeAndPriority(
                 Text(
                     text = title,
                     fontSize = 12.textSdp,
-                    color = textColor,
+                    color = primaryColorVariant,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.alpha(0.7f)
                 )
                 Spacer(modifier = Modifier.width(2.sdp))
                 Text(
-                    text = subTitle, fontSize = 14.textSdp, color = textColor
+                    text = subTitle, fontSize = 14.textSdp, color = primaryColorVariant
                 )
             }
         }
@@ -441,7 +433,7 @@ fun TaskPriorityDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(cardColor, shape = RoundedCornerShape(12.dp)),
+                    .background(background, shape = RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -455,7 +447,7 @@ fun TaskPriorityDialog(
                         text = title,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textColor
+                        color = primaryColor
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -476,10 +468,12 @@ fun TaskPriorityDialog(
 
                         DropdownMenu(
                             expanded = expanded,
-                            containerColor = backgroundColor,
+                            containerColor = onBackground,
                             onDismissRequest = { expanded = false }) {
                             dropDownList?.forEach { priority ->
-                                DropdownMenuItem(text = { Text(priority) }, onClick = {
+                                DropdownMenuItem(colors = MenuDefaults.itemColors(
+                                    textColor = primaryColorVariant
+                                ), text = { Text(priority, color = primaryColorVariant) }, onClick = {
                                     selectedPriority = priority
                                     expanded = false
                                 })
@@ -501,7 +495,7 @@ fun TaskPriorityDialog(
                                 onDismiss()
                         }, text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
-                            color = textColor,
+                            color = primaryColor,
                             fontWeight = FontWeight.Bold
                         )
 
@@ -511,12 +505,12 @@ fun TaskPriorityDialog(
                                 onDismiss()
                             },
                             modifier = Modifier.padding(start = 14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = red)
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                         ) {
                             Text(
                                 text = stringResource(R.string.buttonAdd),
                                 color = textColor,
-                                fontSize = 16.textSdp,
+                                fontSize = 14.textSdp,
                                 fontWeight = FontWeight.Bold
                             )
                         }

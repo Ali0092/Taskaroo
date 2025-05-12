@@ -17,7 +17,7 @@ val cardColor = Color(0xFF3e4553)
 
 //New theme colors
 val background = Color(0xFFF5F5F5) // Background color for the entire app.
-val onBackground = Color(0xFFffffff) // Text color on the background.
+val onBackground = Color(0xFFFFFFFF) // Text color on the background.
 val primaryColor = Color(0xFF032F54)
 val primaryColorVariant = Color(0xB7032F54)
 val gradientStartColor = Color(0xFF798BC7)
