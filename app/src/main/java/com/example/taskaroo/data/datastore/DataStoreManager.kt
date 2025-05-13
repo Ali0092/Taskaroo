@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 class DataStoreManager(var context: Context) {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "taskaroo_preferences")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
 
     companion object {
         val ON_BOARDING_DONE_KEY = booleanPreferencesKey("onboarding_done")

@@ -31,7 +31,10 @@ import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
+import com.example.taskaroo.ui.theme.primaryColor
+import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
@@ -45,22 +48,15 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(background)
     ) {
 
-        Image(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            modifier = Modifier.size(25.sdp),
-            colorFilter = ColorFilter.tint(textColor)
-        )
-
         Text(
-            modifier = Modifier.padding(top = 24.sdp),
+            modifier = Modifier.padding(top = 16.sdp),
             text = stringResource(R.string.basic_info_ScreenTitle),
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = textColor
+            color = primaryColor
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
@@ -69,7 +65,7 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
             text = stringResource(R.string.basic_info_ScreenSubTitle),
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = textColor
+            color = primaryColorVariant
         )
 
         Spacer(modifier = Modifier.height(24.sdp))
@@ -82,7 +78,8 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
             Text(
                 text = stringResource(R.string.basic_info_ScreenInfoHeading),
                 fontSize = 15.textSdp,
-                color = textColor
+                color = primaryColorVariant,
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(Modifier.height(12.sdp))
@@ -98,11 +95,13 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = red,   // Border color when focused
-                    unfocusedBorderColor = textColor, // Border color when not focused
-                    cursorColor = red,          // Cursor color
-                    focusedLabelColor = red,
-                    unfocusedLabelColor = textColor,
+                    focusedBorderColor = primaryColor,   // Border color when focused
+                    unfocusedBorderColor = primaryColorVariant, // Border color when not focused
+                    cursorColor = primaryColor,          // Cursor color
+                    focusedLabelColor = primaryColor,
+                    unfocusedLabelColor = primaryColorVariant,
+                    focusedTextColor = primaryColor,
+                    unfocusedTextColor = primaryColor,
                 ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email, imeAction = ImeAction.Next
@@ -121,11 +120,13 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = red,   // Border color when focused
-                    unfocusedBorderColor = textColor, // Border color when not focused
-                    cursorColor = red,          // Cursor color
-                    focusedLabelColor = red,
-                    unfocusedLabelColor = textColor,
+                    focusedBorderColor = primaryColor,   // Border color when focused
+                    unfocusedBorderColor = primaryColorVariant, // Border color when not focused
+                    cursorColor = primaryColor,          // Cursor color
+                    focusedLabelColor = primaryColor,
+                    unfocusedLabelColor = primaryColorVariant,
+                    focusedTextColor = primaryColor,
+                    unfocusedTextColor = primaryColor,
                 ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email, imeAction = ImeAction.Next

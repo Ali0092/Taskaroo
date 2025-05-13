@@ -36,7 +36,10 @@ import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.PagerModel
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.nav_component.Screens
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
+import com.example.taskaroo.ui.theme.primaryColor
+import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import kotlinx.coroutines.launch
@@ -66,7 +69,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor),
+            .background(background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -91,7 +94,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
             Text(
                 text = stringResource(R.string.app_name),
                 modifier = Modifier.padding(start = 10.sdp),
-                color = textColor,
+                color = primaryColor,
                 fontSize = 16.textSdp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -99,11 +102,11 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
         }
 
         //top title
-        Spacer(modifier = Modifier.height(24.sdp))
+        Spacer(modifier = Modifier.height(16.sdp))
 
         Text(
             text = stringResource(R.string.onboarding_subtitle),
-            color = textColor,
+            color = primaryColorVariant,
             fontSize = 18.textSdp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -120,18 +123,17 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
 
         Spacer(modifier = Modifier.weight(1f))
 
-
         ElevatedButton(
             onClick = {
                 coroutineScope.launch {
                     dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY, true)
                 }
                 navController.navigate(Screens.USER_PROFILE.name)
-            }, colors = ButtonDefaults.buttonColors(containerColor = red)
+            }, colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
         ) {
             Text(
                 text = stringResource(R.string.buttonGetStarted),
-                modifier = Modifier.padding(vertical = 6.sdp, horizontal = 12.sdp),
+                modifier = Modifier.padding(vertical = 4.sdp, horizontal = 12.sdp),
                 color = White,
                 fontSize = 18.textSdp,
                 fontWeight = FontWeight.Bold,
@@ -165,7 +167,7 @@ fun PagerView(image: Int, quote: String, author: String) {
                 .padding(start = 24.sdp, end = 24.sdp)
                 .fillMaxWidth(),
             text = quote,
-            color = textColor,
+            color = primaryColorVariant,
             fontSize = 16.textSdp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
@@ -176,9 +178,9 @@ fun PagerView(image: Int, quote: String, author: String) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = author,
-            color = textColor,
+            color = primaryColor,
             fontSize = 11.textSdp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
 

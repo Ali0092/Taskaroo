@@ -87,14 +87,13 @@ fun AddTaskScreen(
     navController: NavController,
     taskViewModel: TaskViewModel = get(),
     flag: Int = 0,
-    addButtonClick: () -> Unit,
 ) {
 
     val selectedTask by taskViewModel.selectedTask.collectAsState()
 
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    var category by remember { mutableStateOf(selectedTask.category) }
-    var priority by remember { mutableStateOf(selectedTask.priority) }
+    var category by remember { mutableStateOf(if (selectedTask.category=="") "-----" else selectedTask.category) }
+    var priority by remember { mutableStateOf(if (selectedTask.priority=="") "-----" else selectedTask.priority) }
     var startDate by remember { mutableLongStateOf(selectedTask.startDate) }
     var endDate by remember { mutableLongStateOf(selectedTask.dueDate) }
     var taskTitle by remember { mutableStateOf(selectedTask.title) }
@@ -253,7 +252,6 @@ fun AddTaskScreen(
                 .clip(RoundedCornerShape(50.sdp))
                 .background(primaryColor)
                 .clickable {
-                    addButtonClick()
                     if (taskViewModel.taskToBeAdded.value == Task()) {
                         Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT)
                             .show()

@@ -41,6 +41,12 @@ import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.PrefsModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.cardColor
+import com.example.taskaroo.ui.theme.gradientEndColor
+import com.example.taskaroo.ui.theme.gradientStartColor
+import com.example.taskaroo.ui.theme.liteDarkGray
+import com.example.taskaroo.ui.theme.onBackground
+import com.example.taskaroo.ui.theme.primaryColor
+import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 import org.koin.androidx.compose.get
@@ -58,11 +64,11 @@ fun SelectPreferences(userViewModel: UserViewModel = get()) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            modifier = Modifier.padding(top = 24.sdp),
+            modifier = Modifier.padding(top = 16.sdp),
             text = stringResource(R.string.preference_ScreenTitle),
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = textColor
+            color = primaryColor
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
@@ -70,10 +76,10 @@ fun SelectPreferences(userViewModel: UserViewModel = get()) {
         Text(text = stringResource(R.string.preference_ScreenSubTitle),
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = textColor
+            color = primaryColorVariant
         )
 
-        Spacer(modifier = Modifier.height(24.sdp))
+        Spacer(modifier = Modifier.height(16.sdp))
 
         Column {
             repeat(prefsList.size) { index->
@@ -102,9 +108,9 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
             .fillMaxWidth()
             .padding(top = 12.sdp)
             .background(Color.Transparent),
-        shape = RoundedCornerShape(5.sdp),
-        colors = CardDefaults.cardColors(containerColor = if(isChecked) cardColor else Color.Transparent),
-        border = BorderStroke(width = 0.3.dp, color = Color.White),
+        shape = RoundedCornerShape(12.sdp),
+        colors = CardDefaults.cardColors(containerColor = if(isChecked) onBackground else Color.Transparent),
+        border = BorderStroke(width = 0.5.dp, color = primaryColorVariant),
     ) {
 
         Row(modifier = Modifier
@@ -115,12 +121,12 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
 
             Image(painter = painterResource(icon),contentDescription = null, modifier = Modifier.size(50.sdp))
 
-            Spacer(Modifier.width(4.sdp))
+            Spacer(Modifier.width(8.sdp))
 
             Text(text = title,
-                fontSize = 14.textSdp,
-                fontWeight = FontWeight.Normal,
-                color = textColor
+                fontSize = 16.textSdp,
+                fontWeight = FontWeight.Medium,
+                color = primaryColor
             )
             Spacer(Modifier.weight(1f))
 
@@ -130,7 +136,8 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
                     isChecked = !isChecked
                     onSelected(title)
                 },
-                tint = if (isChecked) red else textColor)
+                tint = if (isChecked) primaryColor else primaryColorVariant
+            )
         }
 
     }

@@ -12,41 +12,62 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.taskaroo.common.sdp
+import com.example.taskaroo.ui.theme.gradientEndColor
+import com.example.taskaroo.ui.theme.gradientStartColor
 import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.primaryColor
-import com.example.taskaroo.ui.theme.red
+import com.example.taskaroo.ui.theme.textColor
 
 @Composable
-fun IconSurface(icon: ImageVector, getAddButtonClick:()-> Unit) {
+fun GradientButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    gradientColors: List<Color> = listOf(gradientEndColor, gradientStartColor),
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(50.sdp))
+            .background(brush = Brush.horizontalGradient(gradientColors))
+            .clickable(onClick = onClick)
+            .padding(vertical = 12.dp, horizontal = 24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = text, color = textColor, modifier = Modifier.padding(vertical = 3.sdp))
+    }
+}
+
+@Composable
+fun IconSurface(icon: ImageVector, getAddButtonClick: () -> Unit) {
     Surface(
-        modifier = Modifier
-            .clickable {
-                getAddButtonClick()
-            },
-        color = onBackground,
-        shape = RoundedCornerShape(12.sdp),
-        shadowElevation = 1.sdp
+        modifier = Modifier.clickable {
+            getAddButtonClick()
+        }, color = onBackground, shape = RoundedCornerShape(12.sdp), shadowElevation = 1.sdp
     ) {
         Icon(
             modifier = Modifier
                 .padding(12.sdp)
                 .size(25.sdp),
-            imageVector = icon, contentDescription = null, tint = primaryColor
+            imageVector = icon,
+            contentDescription = null,
+            tint = primaryColor
         )
     }
 }
 
 @Composable
 fun DotIndicator(
-    pageCount: Int, currentPage: Int
+    pageCount: Int, currentPage: Int,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -61,7 +82,7 @@ fun DotIndicator(
                     .padding(4.dp)
                     .size(8.dp)
                     .clip(CircleShape)
-                    .background(if (index == currentPage) red else Color.Gray.copy(alpha = 0.5f))
+                    .background(if (index == currentPage) primaryColor else Color.Gray.copy(alpha = 0.5f))
             )
         }
     }

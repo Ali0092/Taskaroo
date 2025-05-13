@@ -25,9 +25,11 @@ import com.example.taskaroo.common.sdp
 import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.User
 import com.example.taskaroo.presentation.components.DotIndicator
+import com.example.taskaroo.presentation.components.GradientButton
 import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
+import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
@@ -47,8 +49,8 @@ fun CreateProfile(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
-            .padding(start = 24.sdp, end = 24.sdp, top = 44.sdp)
+            .background(background)
+            .padding(start = 16.sdp, end = 16.sdp, top = 44.sdp)
     ) {
 
         HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page->
@@ -63,42 +65,37 @@ fun CreateProfile(
 
         Spacer(modifier = Modifier.height(8.sdp))
 
-        Button(
-            onClick = {
-                animationScope.launch {
-                    if (pagerState.currentPage==0){
-                        buttonText.value = "Get Started !"
-                        pagerState.animateScrollToPage(1)
-                    }else {
-                        checkoutCreateUserValidation(userViewModel.user.value){ canCreateProfile, error ->
-                            //1.Store it in Room
-                            if (error!=null) {
-                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                            }else {
-                                userViewModel.setUser(userViewModel.user.value.copy(id = System.currentTimeMillis()))
-                                userViewModel.createUserData()
-                                //2.Update in dataStore
-                                coroutineScope.launch {
-                                    dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
-                                }
-                                //3.navigate to next
-                                navController.navigate(Screens.MAIN.name)
+
+        GradientButton(
+            text = buttonText.value,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.sdp, start = 32.sdp, end = 32.sdp)
+        ) {
+            animationScope.launch {
+                if (pagerState.currentPage==0){
+                    buttonText.value = "Get Started !"
+                    pagerState.animateScrollToPage(1)
+                }else {
+                    checkoutCreateUserValidation(userViewModel.user.value){ canCreateProfile, error ->
+                        //1.Store it in Room
+                        if (error!=null) {
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        }else {
+                            userViewModel.setUser(userViewModel.user.value.copy(id = System.currentTimeMillis()))
+                            userViewModel.createUserData()
+                            //2.Update in dataStore
+                            coroutineScope.launch {
+                                dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
                             }
+                            //3.navigate to next
+                            navController.navigate(Screens.MAIN.name)
                         }
                     }
                 }
-
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = red),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.sdp)
-        ) {
-            Text(buttonText.value, modifier = Modifier.padding(vertical = 8.sdp), color = textColor)
+            }
         }
-
     }
-
 
 }
 fun checkoutCreateUserValidation(user: User,canCreateUser:(Boolean,String?) -> Unit){
