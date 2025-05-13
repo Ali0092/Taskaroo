@@ -1,8 +1,6 @@
 package com.example.taskaroo.presentation.screens
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,12 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,8 +31,6 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
@@ -68,26 +61,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.components.IconSurface
-import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
-import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.orange
 import com.example.taskaroo.ui.theme.primaryColor
 import com.example.taskaroo.ui.theme.primaryColorVariant
-import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
 import org.koin.androidx.compose.get
 import java.text.SimpleDateFormat
@@ -98,7 +86,8 @@ import java.util.Locale
 fun AddTaskScreen(
     navController: NavController,
     taskViewModel: TaskViewModel = get(),
-    flag: Int = 0
+    flag: Int = 0,
+    addButtonClick: () -> Unit,
 ) {
 
     val selectedTask by taskViewModel.selectedTask.collectAsState()
@@ -142,7 +131,9 @@ fun AddTaskScreen(
                     color = primaryColor,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).padding(end = 25.sdp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 25.sdp),
                 )
 
             }
@@ -169,9 +160,9 @@ fun AddTaskScreen(
                     subTitle = priority,
                     tint = blue,
                     dialogTitle = "Select Task Priority",
-                    dialogList = listOf("Low","Medium","High"),
+                    dialogList = listOf("Low", "Medium", "High"),
                     type = 0
-                ) { p->
+                ) { p ->
                     priority = p
                     taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(priority = priority))
 
@@ -184,9 +175,17 @@ fun AddTaskScreen(
                     subTitle = category,
                     tint = orange,
                     dialogTitle = "Select Task Category",
-                    dialogList = listOf("Default","Android", "Web", "Personal", "Travel", "Professional", "Art"),
+                    dialogList = listOf(
+                        "Default",
+                        "Android",
+                        "Web",
+                        "Personal",
+                        "Travel",
+                        "Professional",
+                        "Art"
+                    ),
                     type = 1
-                ) { cat->
+                ) { cat ->
                     //show in card
                     category = cat
                     taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(category = category))
@@ -204,7 +203,7 @@ fun AddTaskScreen(
                     dialogTitle = "Start Time",
                     dialogList = null,
                     type = 3
-                ) { date->
+                ) { date ->
                     startDate = date.toLong()
                     taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(startDate = startDate))
                 }
@@ -219,7 +218,7 @@ fun AddTaskScreen(
                     dialogTitle = "End Time",
                     dialogList = null,
                     type = 4
-                ) { date->
+                ) { date ->
                     endDate = date.toLong()
                     taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(dueDate = endDate))
                 }
@@ -247,14 +246,17 @@ fun AddTaskScreen(
 
         Box(
             modifier = Modifier
-                .padding(bottom = 32.sdp, start = 16.sdp, end = 16.sdp)
-                .fillMaxWidth().wrapContentHeight()
+                .padding(bottom = 32.sdp, start = 32.sdp, end = 32.sdp)
+                .fillMaxWidth()
+                .wrapContentHeight()
                 .align(Alignment.BottomCenter)
                 .clip(RoundedCornerShape(50.sdp))
                 .background(primaryColor)
                 .clickable {
+                    addButtonClick()
                     if (taskViewModel.taskToBeAdded.value == Task()) {
-                        Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT)
+                            .show()
                         return@clickable
                     }
                     if (flag == 0) {
@@ -266,7 +268,9 @@ fun AddTaskScreen(
                 },
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 18.sdp).align(Alignment.Center),
+                modifier = Modifier
+                    .padding(vertical = 14.sdp)
+                    .align(Alignment.Center),
                 text = "Add a task",
                 fontSize = 16.textSdp,
                 color = textColor,
@@ -277,23 +281,9 @@ fun AddTaskScreen(
                 imageVector = Icons.Rounded.AddCircle,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(50.sdp)
-                    .offset(x = -5.sdp)
-                    .align(Alignment.CenterEnd)
-                    .clickable {
-
-                        if (taskViewModel.taskToBeAdded.value == Task()) {
-                            Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT).show()
-                            return@clickable
-                        }
-
-                        if (flag == 0) {
-                            taskViewModel.createTask()
-                        } else {
-                            taskViewModel.updateTask()
-                        }
-                        navController.popBackStack()
-                    },
+                    .size(46.sdp)
+                    .offset(x = -4.sdp)
+                    .align(Alignment.CenterEnd),
                 tint = textColor
             )
         }
@@ -341,35 +331,31 @@ fun ItemTimeAndPriority(
     dialogList: List<String>? = null,
     tint: Color,
     type: Int = 0,
-    onDone: (String) -> Unit
+    onDone: (String) -> Unit,
 ) {
 
     var canShowDialog by remember { mutableStateOf(false) }
     var canShowDatePickerDialog by remember { mutableStateOf(false) }
 
-    if (type==0 || type==1) {
+    if (type == 0 || type == 1) {
         TaskPriorityDialog(
             title = dialogTitle,
             dropDownList = dialogList,
             showDialog = canShowDialog,
             onDismiss = {
                 canShowDialog = false
-            }, onAdd = { selected ->
+            },
+            onAdd = { selected ->
                 canShowDialog = false
                 onDone(selected)
-            }
-        )
-    }else {
-        DatePickerDialogSample(
-            showDatePicker = canShowDatePickerDialog,
-            onDismiss = {
-                canShowDatePickerDialog = false
-            },
-            onDateSelected = {
-                canShowDatePickerDialog = false
-                onDone(it.toString())
-            }
-        )
+            })
+    } else {
+        DatePickerDialogSample(showDatePicker = canShowDatePickerDialog, onDismiss = {
+            canShowDatePickerDialog = false
+        }, onDateSelected = {
+            canShowDatePickerDialog = false
+            onDone(it.toString())
+        })
     }
 
     Card(
@@ -423,7 +409,7 @@ fun TaskPriorityDialog(
     dropDownList: List<String>? = null,
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onAdd: (String) -> Unit
+    onAdd: (String) -> Unit,
 ) {
     if (showDialog) {
         Dialog(onDismissRequest = {
@@ -453,7 +439,11 @@ fun TaskPriorityDialog(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     // Priority Dropdown
-                    var selectedPriority by remember { mutableStateOf(dropDownList?.get(0).toString()) }
+                    var selectedPriority by remember {
+                        mutableStateOf(
+                            dropDownList?.get(0).toString()
+                        )
+                    }
                     var expanded by remember { mutableStateOf(false) }
 
                     Box(
@@ -464,19 +454,22 @@ fun TaskPriorityDialog(
                             .padding(12.dp),
                         contentAlignment = Alignment.CenterStart) {
 
-                        Text(selectedPriority, color = textColor)
+                        Text(selectedPriority, color = primaryColorVariant)
 
                         DropdownMenu(
                             expanded = expanded,
                             containerColor = onBackground,
                             onDismissRequest = { expanded = false }) {
                             dropDownList?.forEach { priority ->
-                                DropdownMenuItem(colors = MenuDefaults.itemColors(
-                                    textColor = primaryColorVariant
-                                ), text = { Text(priority, color = primaryColorVariant) }, onClick = {
-                                    selectedPriority = priority
-                                    expanded = false
-                                })
+                                DropdownMenuItem(
+                                    colors = MenuDefaults.itemColors(
+                                    textColor = primaryColor,
+                                ),
+                                    text = { Text(priority, color = primaryColorVariant) },
+                                    onClick = {
+                                        selectedPriority = priority
+                                        expanded = false
+                                    })
                             }
                         }
                     }
@@ -493,7 +486,8 @@ fun TaskPriorityDialog(
                         Text(
                             modifier = Modifier.clickable {
                                 onDismiss()
-                        }, text = stringResource(R.string.buttonCancel),
+                            },
+                            text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
                             color = primaryColor,
                             fontWeight = FontWeight.Bold
@@ -526,29 +520,25 @@ fun TaskPriorityDialog(
 fun DatePickerDialogSample(
     showDatePicker: Boolean,
     onDismiss: () -> Unit,
-    onDateSelected: (Long) -> Unit
+    onDateSelected: (Long) -> Unit,
 ) {
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState()
 
-        DatePickerDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(onClick = {
-                    val selectedDate =
-
-                    onDateSelected(datePickerState.selectedDateMillis ?: System.currentTimeMillis())
-                    onDismiss()
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel")
-                }
+        DatePickerDialog(onDismissRequest = onDismiss, confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(
+                    datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                )
+                onDismiss()
+            }) {
+                Text("OK")
             }
-        ) {
+        }, dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }) {
             DatePicker(state = datePickerState)
         }
     }
