@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +36,7 @@ import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.PagerModel
 import com.example.taskaroo.presentation.components.DotIndicator
+import com.example.taskaroo.presentation.components.GradientButton
 import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.backgroundColor
@@ -75,38 +77,13 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
     ) {
 
         val pagerState = rememberPagerState(pageCount = { 3 })
-        //top title....
-        Row(
-            modifier = Modifier
-                .padding(top = 44.sdp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(R.drawable.app_icon),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(30.sdp)
-                    .clip(RoundedCornerShape(5.sdp))
-            )
-
-            Text(
-                text = stringResource(R.string.app_name),
-                modifier = Modifier.padding(start = 10.sdp),
-                color = primaryColor,
-                fontSize = 16.textSdp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        }
 
         //top title
-        Spacer(modifier = Modifier.height(16.sdp))
+        Spacer(modifier = Modifier.height(44.sdp))
 
         Text(
             text = stringResource(R.string.onboarding_subtitle),
-            color = primaryColorVariant,
+            color = primaryColor,
             fontSize = 18.textSdp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -123,24 +100,16 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ElevatedButton(
-            onClick = {
-                coroutineScope.launch {
-                    dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY, true)
-                }
-                navController.navigate(Screens.USER_PROFILE.name)
-            }, colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+        GradientButton(
+            text = stringResource(R.string.buttonGetStarted),
+            modifier = Modifier
+                .padding(vertical = 4.sdp, horizontal = 12.sdp)
         ) {
-            Text(
-                text = stringResource(R.string.buttonGetStarted),
-                modifier = Modifier.padding(vertical = 4.sdp, horizontal = 12.sdp),
-                color = White,
-                fontSize = 18.textSdp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
+            coroutineScope.launch {
+                dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY, true)
+            }
+            navController.navigate(Screens.USER_PROFILE.name)
         }
-
         Spacer(modifier = Modifier.weight(1f))
 
     }

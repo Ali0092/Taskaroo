@@ -313,7 +313,7 @@ fun TopBar(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (data.isLoading) "Loading...." else "Hello, "+data.user?.firstName.toString()+"! ",
+                text = if (data.isLoading) "Loading...." else "Hello, "+data.user?.firstName.toString()+" \uD83D\uDD25 ",
                 color = primaryColor,
                 fontSize = 24.textSdp,
                 fontWeight = FontWeight.SemiBold,
