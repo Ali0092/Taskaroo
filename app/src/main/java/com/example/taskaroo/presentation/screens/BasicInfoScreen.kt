@@ -32,7 +32,6 @@ import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.primaryColor
 import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red

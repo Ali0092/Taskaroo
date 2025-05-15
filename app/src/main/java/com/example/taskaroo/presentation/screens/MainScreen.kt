@@ -31,13 +31,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,11 +76,13 @@ import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationIte
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.presentation.viewstates.UserViewState
+import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.blue
 import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.darKRed
+import com.example.taskaroo.ui.theme.gradientEndColor
+import com.example.taskaroo.ui.theme.gradientStartColor
 import com.example.taskaroo.ui.theme.green
 import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.orange
@@ -97,71 +102,75 @@ fun MainScreen(
     val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = {
-        TopBar(getUserData.value) {
-            //adding task in database
-            taskViewModel.setTaskToBeAdded(Task())
-            taskViewModel.setSelectedTask(Task())
-            //routing to next screen
-            navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
-        }
-    }, bottomBar = {}, floatingActionButton = {},
-        content = { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(background)
-        ) {
-            //its loading
-            if (taskList.value.isLoading) {
-                items(10) {
-                    ShimmerCard()
-                }
-            }else {
+    var isDark by remember { mutableStateOf(false) }
 
-                if (taskList.value.error!= null) { //its error
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .height(600.sdp)
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
+    TaskarooTheme(darkTheme = isDark) {
+
+        Scaffold(topBar = {
+            TopBar(getUserData.value) {
+                //change theme
+                isDark = !isDark
+            }
+        }, bottomBar = {}, floatingActionButton = {
+            FloatingActionButton(
+                modifier = Modifier.padding(end = 8.sdp, bottom = 16.sdp),
+                onClick = {
+                    //adding task in database
+                    taskViewModel.setTaskToBeAdded(Task())
+                    taskViewModel.setSelectedTask(Task())
+                    //routing to next screen
+                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
+                }) {
+                Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
+            }
+        }, content = { innerPadding ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
+            ) {
+                //its loading
+                if (taskList.value.isLoading) {
+                    items(10) {
+                        ShimmerCard()
+                    }
+                } else {
+
+                    if (taskList.value.error != null) { //its error
+                        item {
+                            Column(
+                                modifier = Modifier.height(600.sdp).fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
 
 //                            Image(
 //                                painter = painterResource(R.drawable.blank_list),
 //                                contentDescription = null,
 //                                modifier = Modifier.padding(horizontal = 40.sdp),
 //                            )
-                            Text(
-                                text = stringResource(R.string.labelEmptyScreen),
-                                color = primaryColor,
-                                fontSize = 16.textSdp
-                            )
+                                Text(
+                                    text = stringResource(R.string.labelEmptyScreen),
+                                    color = primaryColor,
+                                    fontSize = 16.textSdp
+                                )
+                            }
                         }
-                    }
 
-                } else { //its data
-                    taskList.value.tasks?.let { list ->
-                        items(list.size) { index ->
-                            ItemTaskSection(
-                                data = list[index],
-                                getClicked = { data ->
+                    } else { //its data
+                        taskList.value.tasks?.let { list ->
+                            items(list.size) { index ->
+                                ItemTaskSection(data = list[index], getClicked = { data ->
                                     taskViewModel.setSelectedTask(data)
                                     navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
-                                },
-                                removeTheTask = { task->
+                                }, removeTheTask = { task ->
                                     taskViewModel.deleteTask(task)
-                                }
-                            )
+                                })
+                            }
                         }
                     }
                 }
             }
-        }
-    })
+        })
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -299,37 +308,29 @@ fun ItemTaskSection(
 }
 
 @Composable
-fun TopBar(
-    data: UserViewState,
-    getAddButtonClick:() -> Unit
-) {
+fun TopBar(data: UserViewState, getMenuClick:()-> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth()
-            .background(background)
             .padding(top = 44.sdp, start = 16.sdp, end = 16.sdp, bottom = 16.sdp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = if (data.isLoading) "Loading...." else "Hello, "+data.user?.firstName.toString()+" \uD83D\uDD25 ",
-                color = primaryColor,
                 fontSize = 24.textSdp,
                 fontWeight = FontWeight.SemiBold,
             )
             Spacer(Modifier.height(3.sdp))
             Text(
                 text = stringResource(R.string.labelMotivation),
-                color = primaryColorVariant,
                 fontSize = 14.textSdp,
                 fontWeight = FontWeight.Normal,
             )
         }
 
-        IconSurface(Icons.Rounded.Add) {
-            getAddButtonClick()
-        }
+        Icon(painter = painterResource(R.drawable.theme_icon,), contentDescription = null, modifier = Modifier.clickable {getMenuClick()})
 
     }
 }

@@ -30,7 +30,6 @@ import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.textColor
 import com.example.taskaroo.ui.theme.red
 import kotlinx.coroutines.launch

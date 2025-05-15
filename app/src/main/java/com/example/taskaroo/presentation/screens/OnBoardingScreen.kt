@@ -39,11 +39,8 @@ import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.components.GradientButton
 import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.example.taskaroo.ui.theme.primaryColor
 import com.example.taskaroo.ui.theme.primaryColorVariant
-import com.example.taskaroo.ui.theme.red
-import com.example.taskaroo.ui.theme.textColor
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 

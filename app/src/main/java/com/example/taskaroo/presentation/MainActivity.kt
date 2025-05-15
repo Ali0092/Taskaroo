@@ -17,7 +17,6 @@ import com.example.taskaroo.presentation.nav_component.Screens
 import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.backgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.getViewModel
