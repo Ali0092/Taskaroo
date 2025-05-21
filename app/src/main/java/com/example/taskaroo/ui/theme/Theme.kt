@@ -1,41 +1,45 @@
 package com.example.taskaroo.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
-    primary = primaryColorVariant,
-    onPrimary = white,
+    primary = white,
+    onPrimary = primaryColorVariant,
+
     background = darkBackgroundColor,
     onBackground = white,
-    primaryContainer = white,
-    onPrimaryContainer = primaryColor
+
+    primaryContainer = primaryColorVariant,
+    onPrimaryContainer = white,
+
+    onSurface = white, //on all varients of card
+    surfaceContainerHighest = darkCardBackgroundColor, //for card
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = primaryColor,
     onPrimary = white,
+
     background = liteBackgroundColor,
     onBackground = primaryColor,
+
     primaryContainer = primaryColor,
-    onPrimaryContainer = white
+    onPrimaryContainer = white,
+
+    onSurface = primaryColor,
+    surfaceContainerHighest = liteCardBackgroundColor,
 
 )
 
 @Composable
 fun TaskarooTheme(
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true, content: @Composable () -> Unit
+    dynamicColor: Boolean = true, content: @Composable () -> Unit,
 ) {
 
     val colorScheme = when {

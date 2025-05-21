@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.map
 
 class DataStoreManager(var context: Context) {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences1")
 
     companion object {
-        val ON_BOARDING_DONE_KEY = booleanPreferencesKey("onboarding_done")
-        val USER_PROFILE_DONE_KEY = booleanPreferencesKey("user_profile_done")
+        val ON_BOARDING_DONE_KEY = booleanPreferencesKey("onboarding_done2")
+        val USER_PROFILE_DONE_KEY = booleanPreferencesKey("user_profile_done2")
     }
 
     suspend fun saveBooleanPrefs(key: Preferences.Key<Boolean>, value: Boolean) {

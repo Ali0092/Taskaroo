@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +53,7 @@ fun IconSurface(icon: ImageVector, getAddButtonClick: () -> Unit) {
     Surface(
         modifier = Modifier.clickable {
             getAddButtonClick()
-        }, color = onBackground, shape = RoundedCornerShape(12.sdp), shadowElevation = 1.sdp
+        }, color = MaterialTheme.colorScheme.surfaceContainerHighest, shape = RoundedCornerShape(12.sdp), shadowElevation = 1.sdp
     ) {
         Icon(
             modifier = Modifier
@@ -60,7 +61,7 @@ fun IconSurface(icon: ImageVector, getAddButtonClick: () -> Unit) {
                 .size(25.sdp),
             imageVector = icon,
             contentDescription = null,
-            tint = primaryColor
+            tint = MaterialTheme.colorScheme.onBackground
         )
     }
 }

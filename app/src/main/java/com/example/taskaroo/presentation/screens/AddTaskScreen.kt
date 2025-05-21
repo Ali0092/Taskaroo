@@ -32,6 +32,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -69,6 +70,7 @@ import com.example.taskaroo.domain.model.Task
 import com.example.taskaroo.presentation.components.IconSurface
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.ui.theme.Purple40
+import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.blue
 import com.example.taskaroo.ui.theme.green
@@ -101,192 +103,192 @@ fun AddTaskScreen(
 
     val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(background)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding()
-                .padding(top = 44.sdp)
-        ) {
-            //top row
-            Row(
+    TaskarooTheme {
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.sdp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .padding()
+                    .padding(top = 44.sdp)
             ) {
+                //top row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.sdp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                IconSurface(icon = Icons.Rounded.KeyboardArrowLeft) {
-                    navController.popBackStack()
+                    IconSurface(icon = Icons.Rounded.KeyboardArrowLeft) {
+                        navController.popBackStack()
+                    }
+
+                    Text(
+                        text = "Add Task",
+                        fontSize = 16.textSdp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 25.sdp),
+                    )
+
                 }
 
+                Spacer(modifier = Modifier.height(16.sdp))
+
+                //time and priority
                 Text(
-                    text = "Add Task",
-                    fontSize = 16.textSdp,
-                    color = primaryColor,
+                    text = "Pick Priority & Time",
+                    fontSize = 18.textSdp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 25.sdp),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 16.sdp)
                 )
 
-            }
+                Spacer(modifier = Modifier.height(16.sdp))
 
-            Spacer(modifier = Modifier.height(16.sdp))
+                //cat and priority
+                Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
+                    ItemTimeAndPriority(
+                        modifier = Modifier.weight(1f),
+                        icon = R.drawable.icon_priority,
+                        title = "Priority",
+                        subTitle = priority,
+                        tint = blue,
+                        dialogTitle = "Select Task Priority",
+                        dialogList = listOf("Low", "Medium", "High"),
+                        type = 0
+                    ) { p ->
+                        priority = p
+                        taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(priority = priority))
 
-            //time and priority
-            Text(
-                text = "Pick Priority & Time",
-                fontSize = 18.textSdp,
-                color = primaryColor,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.sdp)
-            )
-
-            Spacer(modifier = Modifier.height(16.sdp))
-
-            //cat and priority
-            Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
-                ItemTimeAndPriority(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.icon_priority,
-                    title = "Priority",
-                    subTitle = priority,
-                    tint = blue,
-                    dialogTitle = "Select Task Priority",
-                    dialogList = listOf("Low", "Medium", "High"),
-                    type = 0
-                ) { p ->
-                    priority = p
-                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(priority = priority))
-
-                }
-                Spacer(modifier = Modifier.width(12.sdp))
-                ItemTimeAndPriority(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.icon_category,
-                    title = "Category",
-                    subTitle = category,
-                    tint = orange,
-                    dialogTitle = "Select Task Category",
-                    dialogList = listOf(
-                        "Default",
-                        "Android",
-                        "Web",
-                        "Personal",
-                        "Travel",
-                        "Professional",
-                        "Art"
-                    ),
-                    type = 1
-                ) { cat ->
-                    //show in card
-                    category = cat
-                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(category = category))
-                }
-
-            }
-            Spacer(modifier = Modifier.height(12.sdp))
-            Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
-                ItemTimeAndPriority(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.icon_clock,
-                    title = "Start Time",
-                    subTitle = dateFormater.format(Date(startDate)),
-                    tint = green,
-                    dialogTitle = "Start Time",
-                    dialogList = null,
-                    type = 3
-                ) { date ->
-                    startDate = date.toLong()
-                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(startDate = startDate))
-                }
-                Spacer(modifier = Modifier.width(12.sdp))
-                //timeEnd
-                ItemTimeAndPriority(
-                    modifier = Modifier.weight(1f),
-                    icon = R.drawable.icon_clock,
-                    title = "End Time",
-                    subTitle = dateFormater.format(Date(endDate)),
-                    tint = Purple40,
-                    dialogTitle = "End Time",
-                    dialogList = null,
-                    type = 4
-                ) { date ->
-                    endDate = date.toLong()
-                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(dueDate = endDate))
-                }
-            }
-            Spacer(modifier = Modifier.height(24.sdp))
-
-            Text(
-                text = "Task Details",
-                fontSize = 18.textSdp,
-                color = primaryColor,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
-            )
-
-            Spacer(modifier = Modifier.height(8.sdp))
-            CustomTextField(placeHolderText = "Enter Title", text = taskTitle, onValueChange = {
-                taskTitle = it
-                taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(title = taskTitle))
-            })
-            CustomTextField(placeHolderText = "Description", text = taskDetails, onValueChange = {
-                taskDetails = it
-                taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(description = taskDetails))
-            })
-        }
-
-        Box(
-            modifier = Modifier
-                .padding(bottom = 32.sdp, start = 32.sdp, end = 32.sdp)
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(50.sdp))
-                .background(primaryColor)
-                .clickable {
-                    if (taskViewModel.taskToBeAdded.value == Task()) {
-                        Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT)
-                            .show()
-                        return@clickable
                     }
-                    if (flag == 0) {
-                        taskViewModel.createTask()
-                    } else {
-                        taskViewModel.updateTask()
+                    Spacer(modifier = Modifier.width(12.sdp))
+                    ItemTimeAndPriority(
+                        modifier = Modifier.weight(1f),
+                        icon = R.drawable.icon_category,
+                        title = "Category",
+                        subTitle = category,
+                        tint = orange,
+                        dialogTitle = "Select Task Category",
+                        dialogList = listOf(
+                            "Default",
+                            "Android",
+                            "Web",
+                            "Personal",
+                            "Travel",
+                            "Professional",
+                            "Art"
+                        ),
+                        type = 1
+                    ) { cat ->
+                        //show in card
+                        category = cat
+                        taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(category = category))
                     }
-                    navController.popBackStack()
-                },
-        ) {
-            Text(
+
+                }
+                Spacer(modifier = Modifier.height(12.sdp))
+                Row(modifier = Modifier.padding(horizontal = 16.sdp)) {
+                    ItemTimeAndPriority(
+                        modifier = Modifier.weight(1f),
+                        icon = R.drawable.icon_clock,
+                        title = "Start Time",
+                        subTitle = dateFormater.format(Date(startDate)),
+                        tint = green,
+                        dialogTitle = "Start Time",
+                        dialogList = null,
+                        type = 3
+                    ) { date ->
+                        startDate = date.toLong()
+                        taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(startDate = startDate))
+                    }
+                    Spacer(modifier = Modifier.width(12.sdp))
+                    //timeEnd
+                    ItemTimeAndPriority(
+                        modifier = Modifier.weight(1f),
+                        icon = R.drawable.icon_clock,
+                        title = "End Time",
+                        subTitle = dateFormater.format(Date(endDate)),
+                        tint = Purple40,
+                        dialogTitle = "End Time",
+                        dialogList = null,
+                        type = 4
+                    ) { date ->
+                        endDate = date.toLong()
+                        taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(dueDate = endDate))
+                    }
+                }
+                Spacer(modifier = Modifier.height(24.sdp))
+
+                Text(
+                    text = "Task Details",
+                    fontSize = 18.textSdp,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.sdp, end = 24.sdp)
+                )
+
+                Spacer(modifier = Modifier.height(8.sdp))
+                CustomTextField(placeHolderText = "Enter Title", text = taskTitle, onValueChange = {
+                    taskTitle = it
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(title = taskTitle))
+                })
+                CustomTextField(placeHolderText = "Description", text = taskDetails, onValueChange = {
+                    taskDetails = it
+                    taskViewModel.setTaskToBeAdded(taskViewModel.taskToBeAdded.value.copy(description = taskDetails))
+                })
+            }
+
+            Box(
                 modifier = Modifier
-                    .padding(vertical = 14.sdp)
-                    .align(Alignment.Center),
-                text = "Add a task",
-                fontSize = 16.textSdp,
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-            Icon(
-                imageVector = Icons.Rounded.AddCircle,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(46.sdp)
-                    .offset(x = -4.sdp)
-                    .align(Alignment.CenterEnd),
-                tint = textColor
-            )
+                    .padding(bottom = 32.sdp, start = 32.sdp, end = 32.sdp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(50.sdp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .clickable {
+                        if (taskViewModel.taskToBeAdded.value == Task()) {
+                            Toast.makeText(context, "All fields must be filled", Toast.LENGTH_SHORT)
+                                .show()
+                            return@clickable
+                        }
+                        if (flag == 0) {
+                            taskViewModel.createTask()
+                        } else {
+                            taskViewModel.updateTask()
+                        }
+                        navController.popBackStack()
+                    },
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(vertical = 14.sdp)
+                        .align(Alignment.Center),
+                    text = "Add a task",
+                    fontSize = 16.textSdp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                )
+                Icon(
+                    imageVector = Icons.Rounded.AddCircle,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(46.sdp)
+                        .offset(x = -4.sdp)
+                        .align(Alignment.CenterEnd),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+
         }
 
     }
+
 
 }
 
@@ -306,13 +308,13 @@ fun CustomTextField(placeHolderText: String, text: String, onValueChange: (Strin
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             errorContainerColor = Color.Transparent,
-            cursorColor = primaryColor,
-            focusedTextColor = primaryColor,
-            unfocusedTextColor = primaryColor,
+            cursorColor = MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = primaryColor,
-            unfocusedLabelColor = primaryColorVariant,
+            focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
         ),
         shape = RectangleShape,
         textStyle = TextStyle(fontSize = 20.textSdp),
@@ -358,7 +360,6 @@ fun ItemTimeAndPriority(
 
     Card(
         modifier = modifier
-            .background(Color.Transparent)
             .height(70.sdp)
             .clickable {
                 if (type == 0 || type == 1) {
@@ -369,7 +370,7 @@ fun ItemTimeAndPriority(
 
             },
         shape = RoundedCornerShape(20.sdp),
-        colors = CardDefaults.cardColors(containerColor = onBackground),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
     ) {
         Row(
             modifier = Modifier
@@ -388,13 +389,13 @@ fun ItemTimeAndPriority(
                 Text(
                     text = title,
                     fontSize = 12.textSdp,
-                    color = primaryColorVariant,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.alpha(0.7f)
                 )
                 Spacer(modifier = Modifier.width(2.sdp))
                 Text(
-                    text = subTitle, fontSize = 14.textSdp, color = primaryColorVariant
+                    text = subTitle, fontSize = 14.textSdp, color = MaterialTheme.colorScheme.primary
                 )
             }
         }

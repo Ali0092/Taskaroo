@@ -1,15 +1,12 @@
 package com.example.taskaroo.presentation.screens
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -31,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material3.Button
@@ -42,7 +38,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -57,7 +52,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,7 +65,6 @@ import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.common.textSdp
 import com.example.taskaroo.domain.model.Task
-import com.example.taskaroo.presentation.components.IconSurface
 import com.example.taskaroo.presentation.nav_component.SimpleScreenNavigationItem
 import com.example.taskaroo.presentation.viewmodel.TaskViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
@@ -79,12 +72,8 @@ import com.example.taskaroo.presentation.viewstates.UserViewState
 import com.example.taskaroo.ui.theme.TaskarooTheme
 import com.example.taskaroo.ui.theme.background
 import com.example.taskaroo.ui.theme.blue
-import com.example.taskaroo.ui.theme.cardColor
 import com.example.taskaroo.ui.theme.darKRed
-import com.example.taskaroo.ui.theme.gradientEndColor
-import com.example.taskaroo.ui.theme.gradientStartColor
 import com.example.taskaroo.ui.theme.green
-import com.example.taskaroo.ui.theme.onBackground
 import com.example.taskaroo.ui.theme.orange
 import com.example.taskaroo.ui.theme.primaryColor
 import com.example.taskaroo.ui.theme.primaryColorVariant
@@ -97,104 +86,105 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    navController: NavController, userViewModel: UserViewModel = get(), taskViewModel: TaskViewModel = get()
+    navController: NavController,
+    userViewModel: UserViewModel = get(),
+    taskViewModel: TaskViewModel = get(),
 ) {
     val getUserData = userViewModel.userData.collectAsState()
     val taskList = taskViewModel.tasks.collectAsStateWithLifecycle()
-
     var isDark by remember { mutableStateOf(false) }
 
-    TaskarooTheme(darkTheme = isDark) {
+    TaskarooTheme {
+        Scaffold(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            topBar = {
+                TopBar(getUserData.value) {
+                    //change theme
+                    isDark = !isDark
+                }
+            }, bottomBar = {},
+            floatingActionButton = {
+                FloatingActionButton(
+                    modifier = Modifier.padding(end = 8.sdp, bottom = 16.sdp), onClick = {
+                        //adding task in database
+                        taskViewModel.setTaskToBeAdded(Task())
+                        taskViewModel.setSelectedTask(Task())
+                        //routing to next screen
+                        navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
+                    }) {
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
+                }
+            }, content = { innerPadding ->
+                LazyColumn(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)) {
+                    //its loading
+                    if (taskList.value.isLoading) {
+                        items(10) {
+                            ShimmerCard()
+                        }
+                    } else {
 
-        Scaffold(topBar = {
-            TopBar(getUserData.value) {
-                //change theme
-                isDark = !isDark
-            }
-        }, bottomBar = {}, floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(end = 8.sdp, bottom = 16.sdp),
-                onClick = {
-                    //adding task in database
-                    taskViewModel.setTaskToBeAdded(Task())
-                    taskViewModel.setSelectedTask(Task())
-                    //routing to next screen
-                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/0")
-                }) {
-                Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
-            }
-        }, content = { innerPadding ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(innerPadding)
-            ) {
-                //its loading
-                if (taskList.value.isLoading) {
-                    items(10) {
-                        ShimmerCard()
-                    }
-                } else {
-
-                    if (taskList.value.error != null) { //its error
-                        item {
-                            Column(
-                                modifier = Modifier.height(600.sdp).fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
+                        if (taskList.value.error != null) { //its error
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .height(600.sdp)
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
 
 //                            Image(
 //                                painter = painterResource(R.drawable.blank_list),
 //                                contentDescription = null,
 //                                modifier = Modifier.padding(horizontal = 40.sdp),
 //                            )
-                                Text(
-                                    text = stringResource(R.string.labelEmptyScreen),
-                                    color = primaryColor,
-                                    fontSize = 16.textSdp
-                                )
+                                    Text(
+                                        text = stringResource(R.string.labelEmptyScreen),
+                                        color = primaryColor,
+                                        fontSize = 16.textSdp
+                                    )
+                                }
                             }
-                        }
 
-                    } else { //its data
-                        taskList.value.tasks?.let { list ->
-                            items(list.size) { index ->
-                                ItemTaskSection(data = list[index], getClicked = { data ->
-                                    taskViewModel.setSelectedTask(data)
-                                    navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
-                                }, removeTheTask = { task ->
-                                    taskViewModel.deleteTask(task)
-                                })
+                        } else { //its data
+                            taskList.value.tasks?.let { list ->
+                                items(list.size) { index ->
+                                    ItemTaskSection(data = list[index], getClicked = { data ->
+                                        taskViewModel.setSelectedTask(data)
+                                        navController.navigate("${SimpleScreenNavigationItem.AddTask.route}/1")
+                                    }, removeTheTask = { task ->
+                                        taskViewModel.deleteTask(task)
+                                    })
+                                }
                             }
                         }
                     }
                 }
-            }
-        })
+            })
     }
+
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemTaskSection(
-    data: Task, getClicked: (Task) -> Unit, removeTheTask: (Task) -> Unit
+    data: Task, getClicked: (Task) -> Unit, removeTheTask: (Task) -> Unit,
 ) {
     val dateFormater = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     var showRemoveDialogState by remember { mutableStateOf(false) }
 
-    RemoveTaskDialog(
-        showDialog = showRemoveDialogState,
-        onDismiss = {
-            showRemoveDialogState = false
-        },
-        removeTheTask = {
-            removeTheTask(data)
-        }
-    )
+    RemoveTaskDialog(showDialog = showRemoveDialogState, onDismiss = {
+        showRemoveDialogState = false
+    }, removeTheTask = {
+        removeTheTask(data)
+    })
 
     Card(
         modifier = Modifier
-            .background(Color.Transparent)
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 8.sdp, start = 16.sdp, end = 16.sdp)
@@ -203,8 +193,8 @@ fun ItemTaskSection(
             }, onLongClick = {
                 showRemoveDialogState = !showRemoveDialogState
             }),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
         shape = RoundedCornerShape(20.sdp),
-        colors = CardDefaults.cardColors(containerColor = onBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
 
@@ -221,12 +211,12 @@ fun ItemTaskSection(
                 Text(
                     modifier = Modifier.weight(1f),
                     text = data.title,
-                    color = primaryColor,
                     fontSize = 17.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    softWrap = true
+                    softWrap = true,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(modifier = Modifier.width(10.sdp))
@@ -253,10 +243,10 @@ fun ItemTaskSection(
             //description
             Text(
                 text = data.description,
-                color = primaryColorVariant,
                 fontSize = 13.textSdp,
                 fontWeight = FontWeight.Normal,
                 maxLines = 2,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.alpha(0.9f)
             )
 
@@ -275,10 +265,10 @@ fun ItemTaskSection(
 
                 Text(
                     text = data.category,
-                    color = primaryColorVariant,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(modifier = Modifier.width(12.sdp))
@@ -296,10 +286,10 @@ fun ItemTaskSection(
                     text = dateFormater.format(data.startDate) + " - " + dateFormater.format(
                         data.dueDate
                     ),
-                    color = primaryColorVariant,
                     fontSize = 12.textSdp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -308,7 +298,7 @@ fun ItemTaskSection(
 }
 
 @Composable
-fun TopBar(data: UserViewState, getMenuClick:()-> Unit) {
+fun TopBar(data: UserViewState, getMenuClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -318,31 +308,32 @@ fun TopBar(data: UserViewState, getMenuClick:()-> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (data.isLoading) "Loading...." else "Hello, "+data.user?.firstName.toString()+" \uD83D\uDD25 ",
+                text = if (data.isLoading) "Loading...." else "Hello, " + data.user?.firstName.toString() + " \uD83D\uDD25 ",
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 24.textSdp,
                 fontWeight = FontWeight.SemiBold,
             )
             Spacer(Modifier.height(3.sdp))
             Text(
                 text = stringResource(R.string.labelMotivation),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.textSdp,
                 fontWeight = FontWeight.Normal,
             )
         }
 
-        Icon(painter = painterResource(R.drawable.theme_icon,), contentDescription = null, modifier = Modifier.clickable {getMenuClick()})
+        Icon(
+            painter = painterResource(R.drawable.theme_icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.clickable { getMenuClick() })
 
     }
 }
 
-
-
-
-
-
 @Composable
 fun RemoveTaskDialog(
-    showDialog: Boolean, onDismiss: () -> Unit, removeTheTask: () -> Unit
+    showDialog: Boolean, onDismiss: () -> Unit, removeTheTask: () -> Unit,
 ) {
     if (showDialog) {
         Dialog(onDismissRequest = {
@@ -352,7 +343,7 @@ fun RemoveTaskDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(background, shape = RoundedCornerShape(12.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest, shape = RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -364,7 +355,7 @@ fun RemoveTaskDialog(
                         text = stringResource(R.string.removeTaskTitle),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = primaryColorVariant
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -372,7 +363,7 @@ fun RemoveTaskDialog(
                     Text(
                         text = stringResource(R.string.removeTaskSubTitle),
                         fontSize = 16.sp,
-                        color = primaryColorVariant
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -390,7 +381,7 @@ fun RemoveTaskDialog(
                             },
                             text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
-                            color = primaryColor,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -403,8 +394,8 @@ fun RemoveTaskDialog(
                             colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                         ) {
                             Text(
-                               text = stringResource(R.string.buttonRemove),
-                                color = textColor,
+                                text = stringResource(R.string.buttonRemove),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontSize = 16.textSdp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -439,9 +430,7 @@ fun Modifier.shimmerEffect(): Modifier {
     )
 
     val translateX by transition.animateFloat(
-        initialValue = -1000f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
+        initialValue = -1000f, targetValue = 1000f, animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         )

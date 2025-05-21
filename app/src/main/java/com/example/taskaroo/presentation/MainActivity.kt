@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 val systemUiController = rememberSystemUiController()
                 val navController = rememberNavController()
                 systemUiController.setSystemBarsColor(
-                    color = background
+                    color = MaterialTheme.colorScheme.background
                 )
 
                 val isOnBoardingDone = dataStore.getBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY).collectAsState(initial = null) // Change initial value to null

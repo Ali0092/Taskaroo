@@ -13,9 +13,11 @@ val Pink40 = Color(0xFF7D5260)
 
 //lite theme colors
 val liteBackgroundColor = Color(0xFFF5F5F5)
+val liteCardBackgroundColor = Color(0xFFFFFFFF)
 
 // Dark theme colors
 val darkBackgroundColor = Color(0xFF1E1D1D)
+val darkCardBackgroundColor = Color(0xFF232323)
 
 
 val cardColor = Color(0xFF3e4553)
@@ -24,7 +26,7 @@ val cardColor = Color(0xFF3e4553)
 val background = Color(0xFFF5F5F5) // Background color for the entire app.
 val onBackground = Color(0xFFFFFFFF) // Text color on the background.
 val primaryColor = Color(0xFF032F54)
-val primaryColorVariant = Color(0xB7032F54)
+val primaryColorVariant = Color(0xB70C76D0)
 val gradientStartColor = Color(0xFF798BC7)
 val gradientEndColor = Color(0xFFE0496A)
 
