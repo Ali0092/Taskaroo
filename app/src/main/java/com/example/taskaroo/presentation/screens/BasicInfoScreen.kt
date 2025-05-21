@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +49,7 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Text(
@@ -55,16 +57,17 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
             text = stringResource(R.string.basic_info_ScreenTitle),
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = primaryColor
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
 
         Text(
+            modifier = Modifier.alpha(0.5f),
             text = stringResource(R.string.basic_info_ScreenSubTitle),
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = primaryColorVariant
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(24.sdp))
@@ -77,8 +80,9 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
             Text(
                 text = stringResource(R.string.basic_info_ScreenInfoHeading),
                 fontSize = 15.textSdp,
-                color = primaryColorVariant,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.alpha(0.5f)
             )
 
             Spacer(Modifier.height(12.sdp))
@@ -94,13 +98,13 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = primaryColor,   // Border color when focused
-                    unfocusedBorderColor = primaryColorVariant, // Border color when not focused
-                    cursorColor = primaryColor,          // Cursor color
-                    focusedLabelColor = primaryColor,
-                    unfocusedLabelColor = primaryColorVariant,
-                    focusedTextColor = primaryColor,
-                    unfocusedTextColor = primaryColor,
+                    focusedBorderColor = MaterialTheme.colorScheme.onBackground,   // Border color when focused
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground, // Border color when not focused
+                    cursorColor = MaterialTheme.colorScheme.onBackground,          // Cursor color
+                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email, imeAction = ImeAction.Next
@@ -119,13 +123,13 @@ fun BasicInfoScreen(userViewModel: UserViewModel = get()) {
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = primaryColor,   // Border color when focused
-                    unfocusedBorderColor = primaryColorVariant, // Border color when not focused
-                    cursorColor = primaryColor,          // Cursor color
-                    focusedLabelColor = primaryColor,
-                    unfocusedLabelColor = primaryColorVariant,
-                    focusedTextColor = primaryColor,
-                    unfocusedTextColor = primaryColor,
+                    focusedBorderColor = MaterialTheme.colorScheme.onBackground,   // Border color when focused
+                    unfocusedBorderColor = MaterialTheme.colorScheme.onBackground, // Border color when not focused
+                    cursorColor = MaterialTheme.colorScheme.onBackground,          // Cursor color
+                    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
                 ),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email, imeAction = ImeAction.Next

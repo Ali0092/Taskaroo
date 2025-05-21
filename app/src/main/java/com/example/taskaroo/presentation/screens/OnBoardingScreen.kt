@@ -17,11 +17,13 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
@@ -68,7 +70,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -80,7 +82,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
 
         Text(
             text = stringResource(R.string.onboarding_subtitle),
-            color = primaryColor,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 18.textSdp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -131,9 +133,9 @@ fun PagerView(image: Int, quote: String, author: String) {
         Text(
             modifier = Modifier
                 .padding(start = 24.sdp, end = 24.sdp)
-                .fillMaxWidth(),
+                .fillMaxWidth().alpha(0.6f),
             text = quote,
-            color = primaryColorVariant,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 16.textSdp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
@@ -144,7 +146,7 @@ fun PagerView(image: Int, quote: String, author: String) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = author,
-            color = primaryColor,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 11.textSdp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center

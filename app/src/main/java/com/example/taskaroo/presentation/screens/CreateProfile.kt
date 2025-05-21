@@ -10,16 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.dataStore
 import androidx.navigation.NavController
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.data.datastore.DataStoreManager
@@ -27,17 +24,17 @@ import com.example.taskaroo.domain.model.User
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.components.GradientButton
 import com.example.taskaroo.presentation.nav_component.Screens
-import com.example.taskaroo.presentation.viewmodel.PrefsViewModel
 import com.example.taskaroo.presentation.viewmodel.UserViewModel
 import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.textColor
-import com.example.taskaroo.ui.theme.red
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
 fun CreateProfile(
-    navController: NavController, userViewModel: UserViewModel = get(), dataStoreManager: DataStoreManager = get()) {
+    navController: NavController,
+    userViewModel: UserViewModel = get(),
+    dataStoreManager: DataStoreManager = get(),
+) {
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val animationScope = rememberCoroutineScope()
@@ -48,14 +45,14 @@ fun CreateProfile(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.sdp, end = 16.sdp, top = 44.sdp)
     ) {
 
-        HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page->
-            if (page==0){
+        HorizontalPager(pagerState, modifier = Modifier.weight(1f)) { page ->
+            if (page == 0) {
                 SelectPreferences()
-            }else {
+            } else {
                 BasicInfoScreen()
             }
         }
@@ -72,20 +69,23 @@ fun CreateProfile(
                 .padding(bottom = 24.sdp, start = 32.sdp, end = 32.sdp)
         ) {
             animationScope.launch {
-                if (pagerState.currentPage==0){
+                if (pagerState.currentPage == 0) {
                     buttonText.value = "Get Started !"
                     pagerState.animateScrollToPage(1)
-                }else {
-                    checkoutCreateUserValidation(userViewModel.user.value){ canCreateProfile, error ->
+                } else {
+                    checkoutCreateUserValidation(userViewModel.user.value) { canCreateProfile, error ->
                         //1.Store it in Room
-                        if (error!=null) {
+                        if (error != null) {
                             Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                        }else {
+                        } else {
                             userViewModel.setUser(userViewModel.user.value.copy(id = System.currentTimeMillis()))
                             userViewModel.createUserData()
                             //2.Update in dataStore
                             coroutineScope.launch {
-                                dataStoreManager.saveBooleanPrefs(DataStoreManager.USER_PROFILE_DONE_KEY,true)
+                                dataStoreManager.saveBooleanPrefs(
+                                    DataStoreManager.USER_PROFILE_DONE_KEY,
+                                    true
+                                )
                             }
                             //3.navigate to next
                             navController.navigate(Screens.MAIN.name)
@@ -97,16 +97,17 @@ fun CreateProfile(
     }
 
 }
-fun checkoutCreateUserValidation(user: User,canCreateUser:(Boolean,String?) -> Unit){
+
+fun checkoutCreateUserValidation(user: User, canCreateUser: (Boolean, String?) -> Unit) {
     user.let {
-        if (it.firstName.isEmpty()){
+        if (it.firstName.isEmpty()) {
             canCreateUser(false, "First Name cannot be empty")
-        } else if(it.preferences.isEmpty()) {
-            canCreateUser(false,"Please select at least one preference")
-        } else if(it.lastName.isEmpty()) {
-            canCreateUser(false,"Last Name is required")
-        }else {
-            canCreateUser(true,null)
+        } else if (it.preferences.isEmpty()) {
+            canCreateUser(false, "Please select at least one preference")
+        } else if (it.lastName.isEmpty()) {
+            canCreateUser(false, "Last Name is required")
+        } else {
+            canCreateUser(true, null)
         }
     }
 

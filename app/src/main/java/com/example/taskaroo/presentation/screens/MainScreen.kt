@@ -79,6 +79,7 @@ import com.example.taskaroo.ui.theme.primaryColor
 import com.example.taskaroo.ui.theme.primaryColorVariant
 import com.example.taskaroo.ui.theme.red
 import com.example.taskaroo.ui.theme.textColor
+import com.example.taskaroo.ui.theme.white
 import org.koin.androidx.compose.get
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -322,11 +323,6 @@ fun TopBar(data: UserViewState, getMenuClick: () -> Unit) {
             )
         }
 
-        Icon(
-            painter = painterResource(R.drawable.theme_icon),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.clickable { getMenuClick() })
 
     }
 }
@@ -391,11 +387,11 @@ fun RemoveTaskDialog(
                                 onDismiss()
                             },
                             modifier = Modifier.padding(start = 14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Text(
                                 text = stringResource(R.string.buttonRemove),
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 fontSize = 16.textSdp,
                                 fontWeight = FontWeight.Bold
                             )

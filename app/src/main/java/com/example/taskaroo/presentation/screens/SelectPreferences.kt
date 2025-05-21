@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,15 +70,17 @@ fun SelectPreferences(userViewModel: UserViewModel = get()) {
             text = stringResource(R.string.preference_ScreenTitle),
             fontSize = 18.textSdp,
             fontWeight = FontWeight.SemiBold,
-            color = primaryColor
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(4.sdp))
 
-        Text(text = stringResource(R.string.preference_ScreenSubTitle),
+        Text(
+            modifier = Modifier.alpha(0.5f),
+            text = stringResource(R.string.preference_ScreenSubTitle),
             fontSize = 14.textSdp,
             fontWeight = FontWeight.Normal,
-            color = primaryColorVariant
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(16.sdp))
@@ -109,8 +113,8 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
             .padding(top = 12.sdp)
             .background(Color.Transparent),
         shape = RoundedCornerShape(12.sdp),
-        colors = CardDefaults.cardColors(containerColor = if(isChecked) onBackground else Color.Transparent),
-        border = BorderStroke(width = 0.5.dp, color = primaryColorVariant),
+        colors = CardDefaults.cardColors(containerColor = if(isChecked) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent),
+        border = BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onBackground),
     ) {
 
         Row(modifier = Modifier
@@ -126,7 +130,7 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
             Text(text = title,
                 fontSize = 16.textSdp,
                 fontWeight = FontWeight.Medium,
-                color = primaryColor
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(Modifier.weight(1f))
 
@@ -136,7 +140,7 @@ fun PreferenceSingleItem(icon: Int, title: String, onSelected: (String) -> Unit 
                     isChecked = !isChecked
                     onSelected(title)
                 },
-                tint = if (isChecked) primaryColor else primaryColorVariant
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 

@@ -418,7 +418,7 @@ fun TaskPriorityDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(background, shape = RoundedCornerShape(12.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest, shape = RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -432,7 +432,7 @@ fun TaskPriorityDialog(
                         text = title,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = primaryColor
+                        color = MaterialTheme.colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -453,18 +453,18 @@ fun TaskPriorityDialog(
                             .padding(12.dp),
                         contentAlignment = Alignment.CenterStart) {
 
-                        Text(selectedPriority, color = primaryColorVariant)
+                        Text(selectedPriority, color = MaterialTheme.colorScheme.onBackground)
 
                         DropdownMenu(
                             expanded = expanded,
-                            containerColor = onBackground,
+                            containerColor = MaterialTheme.colorScheme.background,
                             onDismissRequest = { expanded = false }) {
                             dropDownList?.forEach { priority ->
                                 DropdownMenuItem(
                                     colors = MenuDefaults.itemColors(
-                                    textColor = primaryColor,
+                                    textColor = MaterialTheme.colorScheme.onBackground,
                                 ),
-                                    text = { Text(priority, color = primaryColorVariant) },
+                                    text = { Text(priority, color = MaterialTheme.colorScheme.onBackground) },
                                     onClick = {
                                         selectedPriority = priority
                                         expanded = false
@@ -488,7 +488,7 @@ fun TaskPriorityDialog(
                             },
                             text = stringResource(R.string.buttonCancel),
                             fontSize = 14.textSdp,
-                            color = primaryColor,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold
                         )
 
@@ -498,11 +498,11 @@ fun TaskPriorityDialog(
                                 onDismiss()
                             },
                             modifier = Modifier.padding(start = 14.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             Text(
                                 text = stringResource(R.string.buttonAdd),
-                                color = textColor,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 fontSize = 14.textSdp,
                                 fontWeight = FontWeight.Bold
                             )
