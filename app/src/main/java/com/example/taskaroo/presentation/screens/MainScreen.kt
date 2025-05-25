@@ -309,7 +309,7 @@ fun TopBar(data: UserViewState, getMenuClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = if (data.isLoading) "Loading...." else "Hello, " + data.user?.firstName.toString() + " \uD83D\uDD25 ",
+                text = if (data.isLoading) stringResource(R.string.loading) else stringResource(R.string.hello) + data.user?.firstName.toString() + " \uD83D\uDD25 ",
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 24.textSdp,
                 fontWeight = FontWeight.SemiBold,
@@ -339,7 +339,10 @@ fun RemoveTaskDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest, shape = RoundedCornerShape(12.dp)),
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape = RoundedCornerShape(12.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Column(

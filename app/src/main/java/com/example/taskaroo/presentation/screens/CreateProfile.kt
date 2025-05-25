@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.taskaroo.R
 import com.example.taskaroo.common.sdp
 import com.example.taskaroo.data.datastore.DataStoreManager
 import com.example.taskaroo.domain.model.User
@@ -70,7 +71,7 @@ fun CreateProfile(
         ) {
             animationScope.launch {
                 if (pagerState.currentPage == 0) {
-                    buttonText.value = "Get Started !"
+                    buttonText.value = context.getString(R.string.get_started)
                     pagerState.animateScrollToPage(1)
                 } else {
                     checkoutCreateUserValidation(userViewModel.user.value) { canCreateProfile, error ->

@@ -4,19 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,8 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,9 +32,6 @@ import com.example.taskaroo.domain.model.PagerModel
 import com.example.taskaroo.presentation.components.DotIndicator
 import com.example.taskaroo.presentation.components.GradientButton
 import com.example.taskaroo.presentation.nav_component.Screens
-import com.example.taskaroo.ui.theme.background
-import com.example.taskaroo.ui.theme.primaryColor
-import com.example.taskaroo.ui.theme.primaryColorVariant
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
@@ -101,8 +90,7 @@ fun OnBoardingScreen(navController: NavController, dataStoreManager: DataStoreMa
 
         GradientButton(
             text = stringResource(R.string.buttonGetStarted),
-            modifier = Modifier
-                .padding(vertical = 4.sdp, horizontal = 12.sdp)
+            modifier = Modifier.padding(vertical = 4.sdp, horizontal = 12.sdp)
         ) {
             coroutineScope.launch {
                 dataStoreManager.saveBooleanPrefs(DataStoreManager.ON_BOARDING_DONE_KEY, true)
@@ -133,7 +121,8 @@ fun PagerView(image: Int, quote: String, author: String) {
         Text(
             modifier = Modifier
                 .padding(start = 24.sdp, end = 24.sdp)
-                .fillMaxWidth().alpha(0.6f),
+                .fillMaxWidth()
+                .alpha(0.6f),
             text = quote,
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 16.textSdp,
