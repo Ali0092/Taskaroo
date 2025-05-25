@@ -4,13 +4,15 @@ TaskKaroo is a modern task management application built using Jetpack Compose, f
 
 ✨ Features
 ---
-✅ Create, edit, and delete tasks
+- Create, edit, and delete tasks
 
-📅 Set due dates and reminders
+- Set due dates and reminders
 
-🎨 Intuitive UI with Jetpack Compose
+- Intuitive UI with Jetpack Compose
+  
+- Light and Dark Theme
 
-☁️ Persistent storage using Room Database
+- Persistent storage using Room Database
 
 
 🏗️ Tech Stack
@@ -34,16 +36,20 @@ TaskKaroo is a modern task management application built using Jetpack Compose, f
 📸 Screenshots
 ---
 <div style="display: flex; gap: 50px;">
- <img src="https://github.com/user-attachments/assets/a8525e26-5497-427e-8163-ec6e053788a2" alt="Screen4" width="250"/>
- <img src="https://github.com/user-attachments/assets/f446ff53-4c6d-4ab3-8954-2312914730f4" alt="Screen4" width="250"/>
- <img src="https://github.com/user-attachments/assets/f6b0a246-3fec-4325-a634-faf8f0565410" alt="Screen4" width="250"/>
+ <img src="https://github.com/user-attachments/assets/a8525e26-5497-427e-8163-ec6e053788a2" alt="Screen4" width="15%"/>
+ <img src="https://github.com/user-attachments/assets/f446ff53-4c6d-4ab3-8954-2312914730f4" alt="Screen4" width="15%"/>
+ <img src="https://github.com/user-attachments/assets/c2c63028-663a-4003-897d-60cc235d1b01" alt="Screen4" width="15%"/>
+
+ <img src="https://github.com/user-attachments/assets/a7f43a0e-7da6-40e8-89e7-27437af4acca" alt="Screen4" width="15%"/>
+ <img src="https://github.com/user-attachments/assets/1d5e3371-913d-451a-841a-758647aca052" alt="Screen4" width="15%"/>
+ <img src="https://github.com/user-attachments/assets/c9e1200d-5216-489d-b362-54780ef3f79a" alt="Screen4" width="15%"/>
+
 </div>
 
-
-
-
-🤝 Contributing
 ---
-Contributions are welcome! Feel free to fork the project and submit a pull request.
+## 🤝 Contributing
+----
+Pull requests are welcome. For major changes, please open an issue first to discuss what you want to change.
+
 
 Developed with ❤️ by **Muhammad Ali**
